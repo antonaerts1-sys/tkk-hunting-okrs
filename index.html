@@ -60,7 +60,7 @@
   .card.c-support .obj-num{background:var(--pink);}
 
   .kr-list{padding:4px 30px 20px;}
-  .kr-row{display:grid;grid-template-columns:20px 1fr 80px 80px;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft);align-items:center;}
+  .kr-row{display:grid;grid-template-columns:20px 1fr 80px 80px 26px;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft);align-items:center;}
   .kr-row:first-child{border-top:1px solid var(--border-soft);}
   .kr-row.head{padding:8px 0 6px;border-bottom:1px solid var(--border-soft);border-top:none;}
   .kr-row.head div{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
@@ -159,8 +159,22 @@
   .empty-cta{display:inline-block;font-size:12px;color:var(--orange);font-weight:700;cursor:pointer;padding:6px 14px;border:1px dashed var(--border);border-radius:99px;background:none;}
   .empty-cta:hover{background:var(--hover);}
 
+  /* Owner avatar */
+  .owner{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;color:#fff;cursor:pointer;flex-shrink:0;letter-spacing:0.02em;transition:transform 0.1s;user-select:none;position:relative;}
+  .owner:hover{transform:scale(1.08);}
+  .owner.unset{background:transparent;border:1.5px dashed #C8CAC5;color:#AAA;font-size:11px;}
+  .owner.unset:hover{border-color:var(--orange);color:var(--orange);}
+  .owner.sm{width:18px;height:18px;font-size:8px;}
+  .owner.md{width:22px;height:22px;font-size:9px;}
+  .owner.lg{width:26px;height:26px;font-size:10px;}
+
   /* Contextmenu */
   .ctx-menu{position:fixed;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.12);padding:4px;min-width:160px;font-size:13px;}
+  .ctx-menu.owner-picker{min-width:180px;padding:6px;}
+  .ctx-menu.owner-picker .picker-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;padding:4px 8px 6px;}
+  .ctx-menu.owner-picker button{display:flex;align-items:center;gap:10px;padding:6px 8px;font-size:13px;}
+  .ctx-menu.owner-picker button .owner{width:22px;height:22px;font-size:9px;}
+  .ctx-menu.owner-picker button.selected{background:var(--hover);font-weight:700;}
   .ctx-menu button{display:block;width:100%;text-align:left;background:none;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;color:var(--black);font-size:13px;}
   .ctx-menu button:hover{background:var(--hover);}
   .ctx-menu button.danger:hover{background:#FFEBE5;color:var(--orange);}
@@ -217,6 +231,15 @@ const app = document.getElementById('app');
 const toastEl = document.getElementById('toast');
 const toastMsg = document.getElementById('toast-msg');
 const toastUndoBtn = document.getElementById('toast-undo');
+
+// ─── Team ───
+const TEAM = [
+  { id: 'anton',     initials: 'AA', name: 'Anton',     color: '#FC470F' },
+  { id: 'michael',   initials: 'MV', name: 'Michael',   color: '#3391FF' },
+  { id: 'eline',     initials: 'EV', name: 'Eline',     color: '#00B800' },
+  { id: 'stephanie', initials: 'ST', name: 'Stephanie', color: '#FF00DB' }
+];
+const getMember = id => TEAM.find(m => m.id === id);
 
 // ─── State ───
 let data = {};
@@ -292,11 +315,46 @@ function openMenu(x, y, items) {
   currentMenu = menu;
 }
 
+// ─── Owner avatar ───
+function ownerAvatar(ownerId, size='sm') {
+  const m = getMember(ownerId);
+  const cls = `owner ${size}`;
+  if (!m) return `<span class="${cls} unset" data-action="pick-owner" title="Geen eigenaar">+</span>`;
+  return `<span class="${cls}" data-action="pick-owner" style="background:${m.color}" title="${esc(m.name)}">${m.initials}</span>`;
+}
+
+function openOwnerPicker(x, y, currentId, onPick) {
+  closeMenu();
+  const menu = document.createElement('div');
+  menu.className = 'ctx-menu owner-picker';
+  menu.innerHTML = `
+    <div class="picker-label">Eigenaar</div>
+    ${TEAM.map(m => `<button data-id="${m.id}" class="${m.id===currentId?'selected':''}">
+      <span class="owner" style="background:${m.color}">${m.initials}</span>${esc(m.name)}
+    </button>`).join('')}
+    <div class="divider"></div>
+    <button data-id="" class="${!currentId?'selected':''}">
+      <span class="owner unset">—</span>Geen eigenaar
+    </button>
+  `;
+  document.body.appendChild(menu);
+  menu.style.left = Math.min(x, window.innerWidth - 200) + 'px';
+  menu.style.top = Math.min(y, window.innerHeight - menu.offsetHeight - 10) + 'px';
+  menu.onclick = e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    onPick(btn.dataset.id || null);
+    closeMenu();
+  };
+  currentMenu = menu;
+}
+
 // ─── Render ───
 function itemRow(item) {
   return `<li data-item-id="${item.id}" class="${item.checked?'checked':''}">
     <div class="mini-check ${item.checked?'checked':''}" data-action="toggle-item"></div>
     <div class="item-label" contenteditable="true" data-action="edit-item">${esc(item.label)}</div>
+    <span data-owner-for="item" data-id="${item.id}">${ownerAvatar(item.owner, 'sm')}</span>
     <button class="row-menu-btn" data-menu-btn data-action="item-menu" title="Opties">⋮</button>
   </li>`;
 }
@@ -357,6 +415,7 @@ function campaignBlock(camp, itemsForCamp) {
       <span class="acc-arrow" data-action="toggle-acc">&#9654;</span>
       <span class="acc-name" data-action="toggle-acc">${esc(camp.name)}</span>
       ${progressHtml}
+      <span data-owner-for="campaign" data-id="${camp.id}">${ownerAvatar(camp.owner, 'md')}</span>
       <button class="acc-menu-btn" data-menu-btn data-action="campaign-menu">⋮</button>
     </div>
     <div class="acc-body">${bodyHtml}</div>
@@ -416,6 +475,7 @@ function oppRow(o) {
   return `<li data-opp-id="${o.id}" class="${o.checked?'checked':''}">
     <div class="mini-check ${o.checked?'checked':''}" data-action="toggle-opp"></div>
     <div class="item-label" contenteditable="true" data-action="edit-opp">${esc(o.label)}</div>
+    <span data-owner-for="opp" data-id="${o.id}">${ownerAvatar(o.owner, 'sm')}</span>
     <button class="row-menu-btn" data-menu-btn data-action="opp-menu">⋮</button>
   </li>`;
 }
@@ -424,6 +484,7 @@ function suppRow(s) {
   return `<li data-supp-id="${s.id}" class="${s.checked?'checked':''}">
     <div class="mini-check ${s.checked?'checked':''}" data-action="toggle-supp"></div>
     <div class="item-label" contenteditable="true" data-action="edit-supp">${esc(s.label)}</div>
+    <span data-owner-for="supp" data-id="${s.id}">${ownerAvatar(s.owner, 'sm')}</span>
     <button class="row-menu-btn" data-menu-btn data-action="supp-menu">⋮</button>
   </li>`;
 }
@@ -441,6 +502,7 @@ function render() {
     <div class="kr-text">${esc(kr.label)}</div>
     <input class="kr-edit ${kr.target?'':'muted'}" data-field="target" value="${esc(kr.target||'___')}" />
     <input class="kr-edit ${kr.actual?'':'muted'}" data-field="actual" value="${esc(kr.actual||'—')}" />
+    <span data-owner-for="kr" data-id="${kr.id}">${ownerAvatar(kr.owner, 'sm')}</span>
   </div>`;
 
   app.innerHTML = `
@@ -455,7 +517,7 @@ function render() {
         <div class="card-title">${esc(o1.title)}</div>
       </div>
       <div class="kr-list">
-        <div class="kr-row head"><div></div><div>Key Result</div><div class="kr-col-target">Doel</div><div class="kr-col-val">Actueel</div></div>
+        <div class="kr-row head"><div></div><div>Key Result</div><div class="kr-col-target">Doel</div><div class="kr-col-val">Actueel</div><div></div></div>
         ${krO1.map(renderKR).join('')}
       </div>
       <div class="plan-divider">
@@ -492,7 +554,7 @@ function render() {
         <div class="card-title">${esc(o2.title)}</div>
       </div>
       <div class="kr-list">
-        <div class="kr-row head"><div></div><div>Key Result</div><div class="kr-col-target">Doel</div><div class="kr-col-val">Actueel</div></div>
+        <div class="kr-row head"><div></div><div>Key Result</div><div class="kr-col-target">Doel</div><div class="kr-col-val">Actueel</div><div></div></div>
         ${krO2.map(renderKR).join('')}
       </div>
       <div class="plan-divider">
@@ -679,7 +741,43 @@ app.addEventListener('click', async (e) => {
     ]);
     return;
   }
+  if (action === 'pick-owner') {
+    e.stopPropagation();
+    const wrap = actionEl.closest('[data-owner-for]');
+    if (!wrap) return;
+    const kind = wrap.dataset.ownerFor;
+    const id = +wrap.dataset.id;
+    const r = actionEl.getBoundingClientRect();
+    const current = getCurrentOwner(kind, id);
+    openOwnerPicker(r.left - 100, r.bottom + 6, current, async (newOwner) => {
+      await setOwner(kind, id, newOwner);
+    });
+    return;
+  }
 });
+
+function getCurrentOwner(kind, id) {
+  const tables = { item: data.items, campaign: data.campaigns, opp: data.opportunities, supp: data.supporting, kr: data.keyResults };
+  const rec = (tables[kind] || []).find(r => r.id === id);
+  return rec?.owner || null;
+}
+
+async function setOwner(kind, id, owner) {
+  const tableMap = { item: 'items', campaign: 'campaigns', opp: 'opportunities', supp: 'supporting_projects', kr: 'key_results' };
+  const table = tableMap[kind];
+  if (!table) return;
+  await sb.from(table).update({ owner }).eq('id', id);
+  // Update state
+  const stateMap = { item: 'items', campaign: 'campaigns', opp: 'opportunities', supp: 'supporting', kr: 'keyResults' };
+  const arr = data[stateMap[kind]];
+  const rec = arr.find(r => r.id === id);
+  if (rec) rec.owner = owner;
+  // Update DOM — just refresh the avatar
+  document.querySelectorAll(`[data-owner-for="${kind}"][data-id="${id}"]`).forEach(el => {
+    const size = el.querySelector('.owner')?.classList.contains('md') ? 'md' : el.querySelector('.owner')?.classList.contains('lg') ? 'lg' : 'sm';
+    el.innerHTML = ownerAvatar(owner, size);
+  });
+}
 
 function handleShowAdd(slot) {
   if (slot.classList.contains('empty')) {
