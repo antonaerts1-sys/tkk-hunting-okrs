@@ -60,13 +60,21 @@
   .card.c-support .obj-num{background:var(--pink);}
 
   .kr-list{padding:4px 30px 20px;}
-  .kr-row{display:grid;grid-template-columns:20px 1fr 80px 80px 26px;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft);align-items:center;}
+  .kr-row{display:grid;grid-template-columns:20px 1fr 80px 80px 26px 20px;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-soft);align-items:center;position:relative;}
   .kr-row:first-child{border-top:1px solid var(--border-soft);}
   .kr-row.head{padding:8px 0 6px;border-bottom:1px solid var(--border-soft);border-top:none;}
   .kr-row.head div{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
   .kr-row.head .kr-col-val,.kr-row.head .kr-col-target{text-align:right;}
   .kr-num{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:0.05em;}
-  .kr-text{font-size:13px;font-weight:500;color:var(--black);}
+  .kr-text{font-size:13px;font-weight:500;color:var(--black);padding:2px 4px;border-radius:3px;cursor:text;min-height:18px;}
+  .kr-text:hover{background:var(--hover);}
+  .kr-text[contenteditable="true"]:focus{background:var(--hover);outline:1px solid var(--orange);}
+  .kr-menu-btn{opacity:0;background:transparent;border:none;padding:2px 4px;font-size:14px;color:var(--muted);cursor:pointer;border-radius:3px;line-height:1;}
+  .kr-row:hover .kr-menu-btn{opacity:1;}
+  .kr-menu-btn:hover{background:var(--chip);color:var(--black);}
+  .add-kr-row{padding:8px 0 4px 32px;}
+  .add-kr-btn{background:none;border:none;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:8px;padding:4px 0;}
+  .add-kr-btn:hover{color:var(--orange);}
   .kr-edit{font-size:13px;font-weight:700;color:var(--black);text-align:right;font-variant-numeric:tabular-nums;border:none;background:transparent;width:100%;cursor:text;padding:2px 6px;border-radius:4px;}
   .kr-edit:hover{background:var(--hover);}
   .kr-edit:focus{background:var(--hover);outline:2px solid var(--orange);}
@@ -499,10 +507,11 @@ function render() {
 
   const renderKR = (kr) => `<div class="kr-row" data-kr-id="${kr.id}">
     <div class="kr-num">KR${kr.position}</div>
-    <div class="kr-text">${esc(kr.label)}</div>
+    <div class="kr-text" contenteditable="true" data-action="edit-kr-label">${esc(kr.label)}</div>
     <input class="kr-edit ${kr.target?'':'muted'}" data-field="target" value="${esc(kr.target||'___')}" />
     <input class="kr-edit ${kr.actual?'':'muted'}" data-field="actual" value="${esc(kr.actual||'—')}" />
     <span data-owner-for="kr" data-id="${kr.id}">${ownerAvatar(kr.owner, 'sm')}</span>
+    <button class="kr-menu-btn" data-menu-btn data-action="kr-menu">⋮</button>
   </div>`;
 
   app.innerHTML = `
@@ -517,8 +526,11 @@ function render() {
         <div class="card-title">${esc(o1.title)}</div>
       </div>
       <div class="kr-list">
-        <div class="kr-row head"><div></div><div>Key Result</div><div class="kr-col-target">Doel</div><div class="kr-col-val">Actueel</div><div></div></div>
+        <div class="kr-row head"><div></div><div>Key Result</div><div class="kr-col-target">Doel</div><div class="kr-col-val">Actueel</div><div></div><div></div></div>
         ${krO1.map(renderKR).join('')}
+        <div class="add-kr-row" data-add-kr data-obj-id="${o1.id}">
+          <button class="add-kr-btn" data-action="show-add-kr"><span class="add-icon">+</span>Key Result toevoegen</button>
+        </div>
       </div>
       <div class="plan-divider">
         <div class="plan-divider-label">Actieplan per sector</div>
@@ -554,8 +566,11 @@ function render() {
         <div class="card-title">${esc(o2.title)}</div>
       </div>
       <div class="kr-list">
-        <div class="kr-row head"><div></div><div>Key Result</div><div class="kr-col-target">Doel</div><div class="kr-col-val">Actueel</div><div></div></div>
+        <div class="kr-row head"><div></div><div>Key Result</div><div class="kr-col-target">Doel</div><div class="kr-col-val">Actueel</div><div></div><div></div></div>
         ${krO2.map(renderKR).join('')}
+        <div class="add-kr-row" data-add-kr data-obj-id="${o2.id}">
+          <button class="add-kr-btn" data-action="show-add-kr"><span class="add-icon">+</span>Key Result toevoegen</button>
+        </div>
       </div>
       <div class="plan-divider">
         <div class="plan-divider-label">Actieplan per sector</div>
@@ -741,6 +756,41 @@ app.addEventListener('click', async (e) => {
     ]);
     return;
   }
+  if (action === 'kr-menu') {
+    e.stopPropagation();
+    const row = actionEl.closest('[data-kr-id]');
+    const id = +row.dataset.krId;
+    const r = actionEl.getBoundingClientRect();
+    openMenu(r.right - 160, r.bottom + 4, [
+      { label: 'Hernoem', action: () => { row.querySelector('.kr-text').focus(); } },
+      { label: 'Verwijder', danger: true, action: () => softDeleteKR(id) }
+    ]);
+    return;
+  }
+  if (action === 'show-add-kr') {
+    const wrap = actionEl.closest('[data-add-kr]');
+    const objId = +wrap.dataset.objId;
+    const existing = data.keyResults.filter(k => k.objective_id === objId);
+    const nextPos = existing.length + 1;
+    wrap.innerHTML = `<span class="add-icon">+</span> <input class="add-input" placeholder="Nieuw Key Result" style="width:calc(100% - 30px);margin-left:8px;" />`;
+    const input = wrap.querySelector('input');
+    input.focus();
+    let saved = false;
+    const save = async () => {
+      if (saved) return;
+      const val = input.value.trim();
+      if (!val) { render(); return; }
+      saved = true;
+      await sb.from('key_results').insert({ objective_id: objId, label: val, position: nextPos });
+      await reload();
+    };
+    input.addEventListener('keydown', ev => {
+      if (ev.key === 'Enter') { ev.preventDefault(); save(); }
+      else if (ev.key === 'Escape') { saved = true; render(); }
+    });
+    input.addEventListener('blur', save);
+    return;
+  }
   if (action === 'pick-owner') {
     e.stopPropagation();
     const wrap = actionEl.closest('[data-owner-for]');
@@ -876,6 +926,11 @@ app.addEventListener('blur', async (e) => {
     await sb.from('key_results').update({ [field]: v }).eq('id', id);
     t.classList.toggle('muted', !v);
   }
+  if (t.dataset.action === 'edit-kr-label') {
+    const id = +t.closest('[data-kr-id]').dataset.krId;
+    const label = t.textContent.trim();
+    if (label) await sb.from('key_results').update({ label }).eq('id', id);
+  }
   if (t.dataset.action === 'edit-item') {
     const id = +t.closest('[data-item-id]').dataset.itemId;
     const label = t.textContent.trim();
@@ -984,6 +1039,17 @@ async function softDeleteOpp(id) {
   await reload();
   showToast('Verwijderd', async () => {
     await sb.from('opportunities').insert({ label: o.label, checked: o.checked, position: o.position });
+    await reload();
+  });
+}
+async function softDeleteKR(id) {
+  const kr = data.keyResults.find(k => k.id === id);
+  await sb.from('key_results').delete().eq('id', id);
+  await reload();
+  showToast('Key Result verwijderd', async () => {
+    await sb.from('key_results').insert({
+      objective_id: kr.objective_id, label: kr.label, target: kr.target, actual: kr.actual, position: kr.position, owner: kr.owner
+    });
     await reload();
   });
 }
