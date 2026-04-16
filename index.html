@@ -164,9 +164,9 @@
   .owner:hover{transform:scale(1.08);}
   .owner.unset{background:transparent;border:1.5px dashed #C8CAC5;color:#AAA;font-size:11px;}
   .owner.unset:hover{border-color:var(--orange);color:var(--orange);}
-  .owner.sm{width:18px;height:18px;font-size:8px;}
-  .owner.md{width:22px;height:22px;font-size:9px;}
-  .owner.lg{width:26px;height:26px;font-size:10px;}
+  .owner.sm{width:20px;height:20px;font-size:7.5px;}
+  .owner.md{width:24px;height:24px;font-size:8.5px;}
+  .owner.lg{width:28px;height:28px;font-size:9.5px;}
 
   /* Contextmenu */
   .ctx-menu{position:fixed;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.12);padding:4px;min-width:160px;font-size:13px;}
@@ -234,10 +234,10 @@ const toastUndoBtn = document.getElementById('toast-undo');
 
 // ─── Team ───
 const TEAM = [
-  { id: 'anton',     initials: 'AA', name: 'Anton',     color: '#FC470F' },
-  { id: 'michael',   initials: 'MV', name: 'Michael',   color: '#3391FF' },
-  { id: 'eline',     initials: 'EV', name: 'Eline',     color: '#00B800' },
-  { id: 'stephanie', initials: 'ST', name: 'Stephanie', color: '#FF00DB' }
+  { id: 'anton',     initials: 'AA',  name: 'Anton Aerts',        color: '#FC470F' },
+  { id: 'michael',   initials: 'ML',  name: 'Michael Liekens',    color: '#3391FF' },
+  { id: 'eline',     initials: 'EVH', name: 'Eline Van Hollebeke', color: '#00B800' },
+  { id: 'stephanie', initials: 'SH',  name: 'Stephanie Heylands', color: '#FF00DB' }
 ];
 const getMember = id => TEAM.find(m => m.id === id);
 
