@@ -249,11 +249,11 @@ function campaignBlock(camp, itemsForCamp) {
   }
 }
 
-function sectorBlock(sector, campaigns, items) {
+function sectorBlock(sector, campaigns, items, isFirst) {
   const secCampaigns = campaigns.filter(c => c.sector_id === sector.id);
   const isPush = secCampaigns.some(c => c.kind === 'campaign');
 
-  return `<div class="sector" data-sector-id="${sector.id}">
+  return `<div class="sector${isFirst?' open':''}" data-sector-id="${sector.id}">
     <div class="sector-header" data-action="toggle-sector">
       <div class="sector-dot" style="background:${sector.color}"></div>
       <div class="sector-name">${esc(sector.name)}</div>
@@ -302,7 +302,7 @@ function render(data) {
         <div class="plan-divider-label">Actieplan per sector</div>
         <div class="plan-divider-line"></div>
       </div>
-      ${sectorsO1.map(s => sectorBlock(s, data.campaigns, data.items)).join('')}
+      ${sectorsO1.map((s,i) => sectorBlock(s, data.campaigns, data.items, i===0)).join('')}
 
       <div class="sector" data-opportunities="true">
         <div class="sector-header" data-action="toggle-sector">
@@ -341,7 +341,7 @@ function render(data) {
         <div class="plan-divider-label">Actieplan per sector</div>
         <div class="plan-divider-line"></div>
       </div>
-      ${sectorsO2.map(s => sectorBlock(s, data.campaigns, data.items)).join('')}
+      ${sectorsO2.map((s,i) => sectorBlock(s, data.campaigns, data.items, i===0)).join('')}
     </div>
 
     <div class="card c-support">
@@ -528,10 +528,13 @@ app.addEventListener('click', handleClick);
 app.addEventListener('blur', handleBlur, true);
 app.addEventListener('keydown', handleKeydown);
 
-reload().catch(err => {
-  console.error(err);
-  app.innerHTML = `<div class="loading">Fout bij laden: ${err.message}. Check console.</div>`;
-});
+console.log('[TKK Hunting] Initializing Supabase connection...');
+reload()
+  .then(() => console.log('[TKK Hunting] Data geladen. Event handlers actief.'))
+  .catch(err => {
+    console.error('[TKK Hunting] Fout:', err);
+    app.innerHTML = `<div class="loading" style="color:#CC0000">Fout bij laden: ${err.message}<br><small>Check browser console (Cmd+Option+J)</small></div>`;
+  });
 </script>
 </body>
 </html>
