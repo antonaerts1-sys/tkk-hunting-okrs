@@ -60,7 +60,7 @@
   .card.c-support .obj-num{background:var(--pink);}
 
   .kr-list{padding:4px 30px 20px;}
-  .kr-row{display:grid;grid-template-columns:20px 1fr 80px 80px 26px 20px;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-soft);align-items:center;position:relative;}
+  .kr-row{display:grid;grid-template-columns:20px 1fr 70px 110px 26px 20px;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-soft);align-items:center;position:relative;}
   .kr-row:first-child{border-top:1px solid var(--border-soft);}
   .kr-row.head{padding:8px 0 6px;border-bottom:1px solid var(--border-soft);border-top:none;}
   .kr-row.head div{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
@@ -69,6 +69,27 @@
   .kr-text{font-size:13px;font-weight:500;color:var(--black);padding:2px 4px;border-radius:3px;cursor:text;min-height:18px;}
   .kr-text:hover{background:var(--hover);}
   .kr-text[contenteditable="true"]:focus{background:var(--hover);outline:1px solid var(--orange);}
+
+  .kr-actual{display:flex;align-items:center;justify-content:flex-end;gap:6px;cursor:pointer;padding:2px 6px;border-radius:4px;}
+  .kr-actual:hover{background:var(--hover);}
+  .kr-actual-val{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--black);}
+  .kr-actual-val.muted{color:var(--muted);}
+  .kr-actual-label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;}
+  .kr-spark{opacity:0.8;margin-right:2px;}
+
+  .kr-wrap{display:flex;flex-direction:column;}
+  .kr-history{display:none;padding:8px 0 12px 32px;}
+  .kr-wrap.open .kr-history{display:block;}
+  .kr-hist-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;padding:6px 0;}
+  .kr-hist-cell{padding:6px 4px;text-align:center;border-radius:6px;cursor:pointer;background:var(--hover);transition:all 0.1s;border:1.5px solid transparent;}
+  .kr-hist-cell:hover{background:#EAEAE3;}
+  .kr-hist-cell.current{border-color:var(--orange);}
+  .kr-hist-cell.has-value{background:var(--green-soft);}
+  .kr-hist-cell.at_risk{background:#FFF4D6;}
+  .kr-hist-cell.off_track{background:#FFE5E0;}
+  .kr-hist-month{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;}
+  .kr-hist-val{font-size:12px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums;}
+  .kr-hist-dot{width:4px;height:4px;background:var(--orange);border-radius:50%;margin:2px auto 0;}
   .kr-menu-btn{opacity:0;background:transparent;border:none;padding:2px 4px;font-size:14px;color:var(--muted);cursor:pointer;border-radius:3px;line-height:1;}
   .kr-row:hover .kr-menu-btn{opacity:1;}
   .kr-menu-btn:hover{background:var(--chip);color:var(--black);}
@@ -183,6 +204,22 @@
   .ctx-menu.owner-picker button{display:flex;align-items:center;gap:10px;padding:6px 8px;font-size:13px;}
   .ctx-menu.owner-picker button .owner{width:22px;height:22px;font-size:9px;}
   .ctx-menu.owner-picker button.selected{background:var(--hover);font-weight:700;}
+
+  .ctx-menu.checkin-popup{min-width:280px;padding:8px;}
+  .checkin-row{padding:6px 8px;}
+  .checkin-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:4px;display:block;}
+  .checkin-input{width:100%;font-family:inherit;font-size:13px;border:1px solid var(--border);padding:6px 10px;border-radius:6px;outline:none;color:var(--black);background:var(--surface);}
+  .checkin-input:focus{border-color:var(--orange);}
+  textarea.checkin-input{resize:vertical;min-height:40px;}
+  .checkin-status{display:flex;gap:4px;}
+  .checkin-status button{flex:1;display:flex;align-items:center;gap:5px;justify-content:center;font-size:11px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);cursor:pointer;font-weight:500;}
+  .checkin-status button.selected{background:var(--hover);border-color:var(--black);font-weight:700;}
+  .checkin-status .dot{width:7px;height:7px;border-radius:50%;}
+  .checkin-actions{display:flex;justify-content:flex-end;gap:6px;padding:8px 8px 4px;border-top:1px solid var(--border-soft);margin-top:8px;}
+  .btn-primary{background:var(--black);color:white;border:none;padding:7px 16px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;}
+  .btn-primary:hover{background:var(--gray-dark, #333);}
+  .btn-ghost{background:transparent;border:none;color:var(--muted);padding:7px 12px;font-size:12px;font-weight:500;cursor:pointer;}
+  .btn-ghost:hover{color:var(--orange);}
   .ctx-menu button{display:block;width:100%;text-align:left;background:none;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;color:var(--black);font-size:13px;}
   .ctx-menu button:hover{background:var(--hover);}
   .ctx-menu button.danger:hover{background:#FFEBE5;color:var(--orange);}
@@ -257,14 +294,15 @@ let pendingDelete = null; // { table, record, timer }
 const esc = s => (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 async function loadData() {
-  const [objectives, keyResults, sectors, campaigns, items, opportunities, supporting] = await Promise.all([
+  const [objectives, keyResults, sectors, campaigns, items, opportunities, supporting, checkIns] = await Promise.all([
     sb.from('objectives').select('*').order('position'),
     sb.from('key_results').select('*').order('position'),
     sb.from('sectors').select('*').order('position'),
     sb.from('campaigns').select('*').order('position'),
     sb.from('items').select('*').order('position'),
     sb.from('opportunities').select('*').order('position'),
-    sb.from('supporting_projects').select('*').order('position')
+    sb.from('supporting_projects').select('*').order('position'),
+    sb.from('kr_check_ins').select('*').order('year').order('month')
   ]);
   data = {
     objectives: objectives.data || [],
@@ -273,8 +311,28 @@ async function loadData() {
     campaigns: campaigns.data || [],
     items: items.data || [],
     opportunities: opportunities.data || [],
-    supporting: supporting.data || []
+    supporting: supporting.data || [],
+    checkIns: checkIns.data || []
   };
+}
+
+// ─── KR helpers ───
+const MONTHS_NL = ['Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Dec'];
+const CURRENT_YEAR = 2026;
+const CURRENT_MONTH = new Date().getMonth() + 1;
+
+function getKRCheckIns(krId) {
+  return data.checkIns.filter(c => c.kr_id === krId).sort((a,b) => a.year-b.year || a.month-b.month);
+}
+function getKRCurrentValue(kr) {
+  const ins = getKRCheckIns(kr.id);
+  if (kr.kr_type === 'cumulative') {
+    return ins.length ? ins[ins.length-1].value : null;
+  }
+  // rate: find current month, or latest
+  const current = ins.find(c => c.year === CURRENT_YEAR && c.month === CURRENT_MONTH);
+  if (current) return current.value;
+  return ins.length ? ins[ins.length-1].value : null;
 }
 
 // ─── Toast ───
@@ -505,14 +563,58 @@ function render() {
   const sectorsO1 = data.sectors.filter(s => s.objective_id === o1.id);
   const sectorsO2 = data.sectors.filter(s => s.objective_id === o2.id);
 
-  const renderKR = (kr) => `<div class="kr-row" data-kr-id="${kr.id}">
-    <div class="kr-num">KR${kr.position}</div>
-    <div class="kr-text" contenteditable="true" data-action="edit-kr-label">${esc(kr.label)}</div>
-    <input class="kr-edit ${kr.target?'':'muted'}" data-field="target" value="${esc(kr.target||'___')}" />
-    <input class="kr-edit ${kr.actual?'':'muted'}" data-field="actual" value="${esc(kr.actual||'—')}" />
-    <span data-owner-for="kr" data-id="${kr.id}">${ownerAvatar(kr.owner, 'sm')}</span>
-    <button class="kr-menu-btn" data-menu-btn data-action="kr-menu">⋮</button>
-  </div>`;
+  const renderKR = (kr) => {
+    const currentVal = getKRCurrentValue(kr);
+    const type = kr.kr_type || 'rate';
+    const ins = getKRCheckIns(kr.id);
+    const label = type === 'rate' ? MONTHS_NL[CURRENT_MONTH-1] : 'Totaal';
+    const sparkHtml = ins.length ? renderSparkline(ins, type) : '';
+
+    return `<div class="kr-wrap" data-kr-id="${kr.id}">
+      <div class="kr-row" data-kr-id="${kr.id}">
+        <div class="kr-num">KR${kr.position}</div>
+        <div class="kr-text" contenteditable="true" data-action="edit-kr-label">${esc(kr.label)}</div>
+        <input class="kr-edit ${kr.target?'':'muted'}" data-field="target" value="${esc(kr.target||'___')}" />
+        <div class="kr-actual" data-action="toggle-kr-history">
+          ${sparkHtml}
+          <span class="kr-actual-val ${currentVal?'':'muted'}">${esc(currentVal||'—')}</span>
+          <span class="kr-actual-label">${label}</span>
+        </div>
+        <span data-owner-for="kr" data-id="${kr.id}">${ownerAvatar(kr.owner, 'sm')}</span>
+        <button class="kr-menu-btn" data-menu-btn data-action="kr-menu">⋮</button>
+      </div>
+      <div class="kr-history" data-kr-history="${kr.id}">${renderKRHistory(kr)}</div>
+    </div>`;
+  };
+
+  function renderSparkline(ins, type) {
+    if (ins.length < 2) return '';
+    const vals = ins.map(c => parseFloat((c.value||'0').replace(/[^\d.-]/g,''))||0);
+    const max = Math.max(...vals, 1);
+    const w = 50, h = 16;
+    const points = vals.map((v,i) => `${i/(vals.length-1)*w},${h-(v/max)*h}`).join(' ');
+    return `<svg class="kr-spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline points="${points}" fill="none" stroke="var(--green)" stroke-width="1.5"/></svg>`;
+  }
+
+  function renderKRHistory(kr) {
+    const ins = getKRCheckIns(kr.id);
+    const year = CURRENT_YEAR;
+    const byMonth = {};
+    ins.filter(c => c.year === year).forEach(c => { byMonth[c.month] = c; });
+    return `<div class="kr-hist-grid">
+      ${MONTHS_NL.map((name, i) => {
+        const m = i+1;
+        const c = byMonth[m];
+        const isCurrent = m === CURRENT_MONTH;
+        const statusClass = c?.status || '';
+        return `<div class="kr-hist-cell ${isCurrent?'current':''} ${c?'has-value':''} ${statusClass}" data-kr-month data-kr-id="${kr.id}" data-year="${year}" data-month="${m}">
+          <div class="kr-hist-month">${name}</div>
+          <div class="kr-hist-val">${c ? esc(c.value||'—') : '—'}</div>
+          ${c?.comment ? `<div class="kr-hist-dot" title="${esc(c.comment)}"></div>` : ''}
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
 
   app.innerHTML = `
   <div class="grid">
@@ -651,6 +753,16 @@ function showAddInput(slot, onSave, placeholder) {
 
 // ─── Event handling ───
 app.addEventListener('click', async (e) => {
+  // KR month cell click (no data-action)
+  const monthCell = e.target.closest('[data-kr-month]');
+  if (monthCell) {
+    e.stopPropagation();
+    const krId = +monthCell.dataset.krId;
+    const year = +monthCell.dataset.year;
+    const month = +monthCell.dataset.month;
+    openCheckInPopup(monthCell, krId, year, month);
+    return;
+  }
   const actionEl = e.target.closest('[data-action]');
   if (!actionEl) return;
   const action = actionEl.dataset.action;
@@ -760,11 +872,21 @@ app.addEventListener('click', async (e) => {
     e.stopPropagation();
     const row = actionEl.closest('[data-kr-id]');
     const id = +row.dataset.krId;
+    const kr = data.keyResults.find(k => k.id === id);
+    const currentType = kr.kr_type || 'rate';
     const r = actionEl.getBoundingClientRect();
     openMenu(r.right - 160, r.bottom + 4, [
       { label: 'Hernoem', action: () => { row.querySelector('.kr-text').focus(); } },
+      { label: currentType === 'rate' ? 'Type: Per maand ✓' : 'Wijzig naar: Per maand', action: () => setKRType(id, 'rate') },
+      { label: currentType === 'cumulative' ? 'Type: Cumulatief ✓' : 'Wijzig naar: Cumulatief', action: () => setKRType(id, 'cumulative') },
+      { divider: true },
       { label: 'Verwijder', danger: true, action: () => softDeleteKR(id) }
     ]);
+    return;
+  }
+  if (action === 'toggle-kr-history') {
+    const wrap = actionEl.closest('.kr-wrap');
+    wrap.classList.toggle('open');
     return;
   }
   if (action === 'show-add-kr') {
@@ -1042,6 +1164,79 @@ async function softDeleteOpp(id) {
     await reload();
   });
 }
+async function setKRType(id, type) {
+  await sb.from('key_results').update({ kr_type: type }).eq('id', id);
+  await reload();
+  showToast(`KR type: ${type === 'rate' ? 'Per maand' : 'Cumulatief'}`);
+}
+
+function openCheckInPopup(anchor, krId, year, month) {
+  closeMenu();
+  const kr = data.keyResults.find(k => k.id === krId);
+  const existing = data.checkIns.find(c => c.kr_id === krId && c.year === year && c.month === month);
+
+  const menu = document.createElement('div');
+  menu.className = 'ctx-menu checkin-popup';
+  menu.innerHTML = `
+    <div class="picker-label">${MONTHS_NL[month-1]} ${year} · ${esc(kr.label)}</div>
+    <div class="checkin-row">
+      <label class="checkin-label">Waarde</label>
+      <input class="checkin-input" data-field="value" placeholder="bv. 3 of €50k" value="${esc(existing?.value||'')}" />
+    </div>
+    <div class="checkin-row">
+      <label class="checkin-label">Status</label>
+      <div class="checkin-status">
+        <button data-status="on_track" class="${existing?.status==='on_track'||!existing?'selected':''}"><span class="dot" style="background:#00B800"></span>On track</button>
+        <button data-status="at_risk" class="${existing?.status==='at_risk'?'selected':''}"><span class="dot" style="background:#E0B000"></span>At risk</button>
+        <button data-status="off_track" class="${existing?.status==='off_track'?'selected':''}"><span class="dot" style="background:#E04545"></span>Off track</button>
+      </div>
+    </div>
+    <div class="checkin-row">
+      <label class="checkin-label">Notitie</label>
+      <textarea class="checkin-input" data-field="comment" placeholder="Optioneel" rows="2">${esc(existing?.comment||'')}</textarea>
+    </div>
+    <div class="checkin-actions">
+      ${existing ? `<button class="btn-ghost" data-action="clear">Wissen</button>` : ''}
+      <button class="btn-primary" data-action="save">Opslaan</button>
+    </div>
+  `;
+  document.body.appendChild(menu);
+  const r = anchor.getBoundingClientRect();
+  menu.style.left = Math.min(r.left, window.innerWidth - 280) + 'px';
+  menu.style.top = Math.min(r.bottom + 6, window.innerHeight - menu.offsetHeight - 10) + 'px';
+
+  let currentStatus = existing?.status || 'on_track';
+
+  menu.querySelectorAll('[data-status]').forEach(b => b.onclick = () => {
+    currentStatus = b.dataset.status;
+    menu.querySelectorAll('[data-status]').forEach(x => x.classList.toggle('selected', x === b));
+  });
+
+  menu.querySelector('[data-action="save"]').onclick = async () => {
+    const value = menu.querySelector('[data-field="value"]').value.trim();
+    const comment = menu.querySelector('[data-field="comment"]').value.trim();
+    if (!value && !comment) { closeMenu(); return; }
+    if (existing) {
+      await sb.from('kr_check_ins').update({ value, status: currentStatus, comment, updated_at: new Date().toISOString() }).eq('id', existing.id);
+    } else {
+      await sb.from('kr_check_ins').insert({ kr_id: krId, year, month, value, status: currentStatus, comment });
+    }
+    closeMenu();
+    await reload();
+    showToast('Check-in opgeslagen');
+  };
+  const clearBtn = menu.querySelector('[data-action="clear"]');
+  if (clearBtn) clearBtn.onclick = async () => {
+    await sb.from('kr_check_ins').delete().eq('id', existing.id);
+    closeMenu();
+    await reload();
+    showToast('Check-in gewist');
+  };
+
+  menu.querySelector('[data-field="value"]').focus();
+  currentMenu = menu;
+}
+
 async function softDeleteKR(id) {
   const kr = data.keyResults.find(k => k.id === id);
   await sb.from('key_results').delete().eq('id', id);
