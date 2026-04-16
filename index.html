@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TKK Hunting 2026 — V3</title>
+<title>TKK Hunting 2026</title>
 <style>
   @font-face {
     font-family: 'GT Flexa';
@@ -32,49 +32,44 @@
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{font-family:'GT Flexa',sans-serif;background:var(--bg);color:var(--black);line-height:1.5;font-weight:400;-webkit-font-smoothing:antialiased;}
-  h1,.card-title,.sector-name,.metric-num,.objective-big{font-family:'GT Flexa Condensed','GT Flexa',sans-serif;font-weight:700;letter-spacing:-0.02em;}
+  h1,.card-title,.sector-name,.metric-num{font-family:'GT Flexa Condensed','GT Flexa',sans-serif;font-weight:700;letter-spacing:-0.02em;}
 
   .page{max-width:1440px;margin:0 auto;padding:40px 24px 80px;}
+  .loading{text-align:center;padding:100px 20px;color:var(--muted);font-size:14px;}
 
-  /* ── Header ── */
   .header{padding:0 8px 28px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:8px;}
   .header-left{flex:1;min-width:260px;}
   .header-label{font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
   .header h1{font-size:clamp(48px,6vw,72px);line-height:0.9;color:var(--black);}
   .header h1 em{font-style:normal;color:var(--orange);}
 
-  /* ── 3-column grid ── */
   .grid{display:grid;grid-template-columns:1fr 1fr 320px;gap:16px;align-items:start;}
 
   .card{background:var(--surface);border-radius:28px;overflow:hidden;position:relative;border:1px solid var(--border-soft);}
   .card-top{padding:28px 30px 24px;position:relative;}
   .objective-meta{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
   .obj-num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;font-size:13px;font-weight:700;color:var(--white);font-family:'GT Flexa Condensed',sans-serif;}
-  .obj-num.green{background:var(--green);}
-  .obj-num.blue{background:var(--blue);}
-  .obj-num.pink{background:var(--pink);}
   .obj-tag{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
   .card-title{font-size:30px;line-height:1.05;}
   .card.c-support .card-title{font-size:22px;}
 
-  /* KR list */
   .kr-list{padding:4px 30px 20px;}
-  .kr-row{display:grid;grid-template-columns:20px 1fr 56px 56px;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft);align-items:center;}
+  .kr-row{display:grid;grid-template-columns:20px 1fr 80px 80px;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft);align-items:center;}
   .kr-row:first-child{border-top:1px solid var(--border-soft);}
   .kr-row.head{padding:8px 0 6px;border-bottom:1px solid var(--border-soft);border-top:none;}
   .kr-row.head div{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
   .kr-row.head .kr-col-val,.kr-row.head .kr-col-target{text-align:right;}
   .kr-num{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:0.05em;}
   .kr-text{font-size:13px;font-weight:500;color:var(--black);}
-  .kr-target{font-size:13px;font-weight:700;color:var(--black);text-align:right;font-variant-numeric:tabular-nums;}
-  .kr-val{font-size:13px;font-weight:700;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums;}
+  .kr-edit{font-size:13px;font-weight:700;color:var(--black);text-align:right;font-variant-numeric:tabular-nums;border:none;background:transparent;width:100%;font-family:inherit;cursor:text;padding:2px 6px;border-radius:4px;}
+  .kr-edit:hover{background:var(--hover);}
+  .kr-edit:focus{background:var(--hover);outline:2px solid var(--orange);}
+  .kr-edit.muted{color:var(--muted);}
 
-  /* Plan header — brug tussen KR's en sectoren */
   .plan-divider{display:flex;align-items:center;gap:12px;padding:14px 30px 10px;}
   .plan-divider-label{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
   .plan-divider-line{flex:1;height:1px;background:var(--border-soft);}
 
-  /* Sector */
   .sector{border-top:1px solid var(--border-soft);}
   .sector:first-of-type{border-top:none;}
   .sector-header{display:flex;align-items:center;gap:12px;padding:14px 30px;cursor:pointer;user-select:none;transition:background 0.12s;}
@@ -87,7 +82,6 @@
   .sector.open .sector-body{display:block;}
   .sector-content{padding:0 30px 16px 52px;}
 
-  /* Accordion */
   .acc{border-top:1px solid var(--border-soft);}
   .acc:first-child{border-top:none;}
   .acc-header{display:flex;align-items:center;gap:10px;padding:11px 0;cursor:pointer;font-size:13px;font-weight:700;user-select:none;flex:1;}
@@ -102,7 +96,12 @@
   .cm-sub-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:6px;margin-top:4px;}
   .cm-list{list-style:none;}
   .cm-list li{display:flex;gap:10px;padding:5px 0;font-size:12.5px;align-items:center;color:var(--black);}
-  .cm-list li:hover{color:var(--black);}
+  .item-label{flex:1;cursor:text;padding:2px 4px;border-radius:3px;}
+  .item-label:hover{background:var(--hover);}
+  .item-label[contenteditable="true"]:focus{background:var(--hover);outline:1px solid var(--orange);}
+  .item-delete{opacity:0;font-size:14px;color:var(--muted);cursor:pointer;padding:0 8px;border-radius:3px;transition:opacity 0.1s;line-height:1;}
+  .cm-list li:hover .item-delete{opacity:1;}
+  .item-delete:hover{color:var(--orange);}
   .mini-check{width:14px;height:14px;border:2px solid #CCCEC9;border-radius:3px;flex-shrink:0;cursor:pointer;transition:all 0.1s;position:relative;}
   .mini-check:hover{border-color:var(--orange);}
   .mini-check.checked{background:var(--green);border-color:var(--green);}
@@ -113,17 +112,19 @@
   .add-campaign{padding:10px 0;margin-top:6px;border-top:1px dashed var(--border);font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;text-align:center;letter-spacing:0.02em;}
   .add-campaign:hover{color:var(--orange);}
 
-  /* Support card styling */
   .card.c-support .card-top{padding-bottom:20px;}
   .support-list{padding:8px 24px 20px;}
   .support-list .cm-list li{padding:8px 0;font-size:13px;border-bottom:1px solid var(--border-soft);}
   .support-list .cm-list li:last-child{border-bottom:none;}
   .support-list .add-item{padding:12px 0 4px;}
 
-  /* Sector-colored card accents */
   .card.c-sales .obj-num{background:var(--green);}
   .card.c-awareness .obj-num{background:var(--blue);}
   .card.c-support .obj-num{background:var(--pink);}
+
+  .save-indicator{position:fixed;bottom:20px;right:20px;background:var(--black);color:white;padding:10px 16px;border-radius:99px;font-size:12px;font-weight:600;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:100;}
+  .save-indicator.show{opacity:1;}
+  .save-indicator.error{background:#CC0000;}
 
   .footer{text-align:center;font-size:11px;color:var(--muted);padding:32px 0 0;letter-spacing:0.04em;}
 
@@ -134,7 +135,6 @@
   @media(max-width:820px){
     .grid{grid-template-columns:1fr;}
     .grid > .card:last-child{grid-column:auto;}
-    .metrics{grid-template-columns:1fr 1fr 1fr;}
     .header{padding:28px 24px;}
     .header h1{font-size:34px;}
     .card-top,.sector-content{padding-left:20px;padding-right:20px;}
@@ -143,378 +143,395 @@
 </style>
 </head>
 <body>
+
 <div class="page">
-
-<!-- ═══ HEADER ═══ -->
-<div class="header">
-  <div class="header-left">
-    <div class="header-label">The Kind Kids · Hunting 2026</div>
-    <h1>Hunting <em>OKR's</em></h1>
+  <div class="header">
+    <div class="header-left">
+      <div class="header-label">The Kind Kids · Hunting 2026</div>
+      <h1>Hunting <em>OKR's</em></h1>
+    </div>
   </div>
+  <div id="app"><div class="loading">Laden...</div></div>
+  <div class="footer">TKK Hunting · 2026 · Live</div>
 </div>
 
-<!-- ═══ 3-COLUMN GRID ═══ -->
-<div class="grid">
+<div class="save-indicator" id="save-indicator">Opgeslagen</div>
 
-  <!-- O1: SALES -->
-  <div class="card c-sales">
-    <div class="card-top">
-      <div class="objective-meta">
-        <div class="obj-num">1</div>
-        <div class="obj-tag">Sales</div>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const SUPABASE_URL = 'https://zewesunhchxboyqimrve.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpld2VzdW5oY2h4Ym95cWltcnZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzMzM2MDYsImV4cCI6MjA5MTkwOTYwNn0.R0-GjD0oeoYpyo2FHSsKyhw-mHRaYRH6DqXqAybAljA';
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const app = document.getElementById('app');
+const indicator = document.getElementById('save-indicator');
+
+let saveTimer;
+function showSaved(ok=true) {
+  clearTimeout(saveTimer);
+  indicator.textContent = ok ? 'Opgeslagen' : 'Fout bij opslaan';
+  indicator.classList.toggle('error', !ok);
+  indicator.classList.add('show');
+  saveTimer = setTimeout(() => indicator.classList.remove('show'), 1500);
+}
+
+async function loadData() {
+  const [objectives, keyResults, sectors, campaigns, items, opportunities, supporting] = await Promise.all([
+    sb.from('objectives').select('*').order('position'),
+    sb.from('key_results').select('*').order('position'),
+    sb.from('sectors').select('*').order('position'),
+    sb.from('campaigns').select('*').order('position'),
+    sb.from('items').select('*').order('position'),
+    sb.from('opportunities').select('*').order('position'),
+    sb.from('supporting_projects').select('*').order('position')
+  ]);
+  return {
+    objectives: objectives.data || [],
+    keyResults: keyResults.data || [],
+    sectors: sectors.data || [],
+    campaigns: campaigns.data || [],
+    items: items.data || [],
+    opportunities: opportunities.data || [],
+    supporting: supporting.data || []
+  };
+}
+
+const esc = s => (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function itemRow(item) {
+  return `<li data-item-id="${item.id}">
+    <div class="mini-check ${item.checked?'checked':''}" data-action="toggle-item"></div>
+    <div class="item-label" contenteditable="true" data-action="edit-item">${esc(item.label)}</div>
+    <span class="item-delete" data-action="delete-item">×</span>
+  </li>`;
+}
+
+function campaignBlock(camp, itemsForCamp) {
+  const orgs = itemsForCamp.filter(i => i.kind === 'org');
+  const actions = itemsForCamp.filter(i => i.kind === 'action');
+  const generic = itemsForCamp.filter(i => i.kind === 'item');
+  const total = itemsForCamp.length;
+  const done = itemsForCamp.filter(i => i.checked).length;
+
+  if (camp.kind === 'campaign') {
+    return `<div class="acc" data-campaign-id="${camp.id}">
+      <div class="acc-header" data-action="toggle-acc">
+        <span class="acc-arrow">&#9654;</span>${esc(camp.name)}
+        <span class="acc-counter">${done}/${total}</span>
       </div>
-      <div class="card-title">€400k nieuwe omzet realiseren</div>
-    </div>
-    <div class="kr-list">
-      <div class="kr-row head"><div></div><div>Key Result</div><div class="kr-col-target">Doel</div><div class="kr-col-val">Actueel</div></div>
-      <div class="kr-row"><div class="kr-num">KR1</div><div class="kr-text">Kennismakingsgesprekken / maand</div><div class="kr-target">___</div><div class="kr-val">—</div></div>
-      <div class="kr-row"><div class="kr-num">KR2</div><div class="kr-text">Offertes uitgestuurd / maand</div><div class="kr-target">___</div><div class="kr-val">—</div></div>
-      <div class="kr-row"><div class="kr-num">KR3</div><div class="kr-text">Omzet getekend</div><div class="kr-target">€400k</div><div class="kr-val">€—</div></div>
-    </div>
-
-    <div class="plan-divider">
-      <div class="plan-divider-label">Actieplan per sector</div>
-      <div class="plan-divider-line"></div>
-    </div>
-
-    <!-- Sector: Zorg -->
-    <div class="sector open" onclick="if(event.target.closest('.mini-check')||event.target.closest('.add-item')||event.target.closest('.add-campaign')||event.target.closest('.acc'))return;if(event.target.closest('.sector-header'))this.classList.toggle('open');">
-      <div class="sector-header">
-        <div class="sector-dot" style="background:var(--blue)"></div>
-        <div class="sector-name">Zorg, welzijn & maatschappij</div>
-        <span class="sector-arrow">&#9654;</span>
-      </div>
-      <div class="sector-body">
-        <div class="sector-content">
-          <div class="acc" onclick="event.target.closest('.mini-check')||event.target.closest('.add-item')?null:this.classList.toggle('open')">
-            <div class="acc-header"><span class="acc-arrow">&#9654;</span>Tele-Onthaal<span class="acc-counter">0/7</span></div>
-            <div class="acc-body">
-              <div class="cm-sub">
-                <div class="cm-sub-label">Organisaties</div>
-                <ul class="cm-list">
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>CAW Antwerpen</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>CAW Brussel</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Rode Kruis Vlaanderen</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Drugslijn</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Zelfmoordlijn 1813</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>JAC</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Awel</li>
-                </ul>
-                <div class="add-item"><div class="add-icon">+</div>toevoegen</div>
-              </div>
-              <div class="cm-sub">
-                <div class="cm-sub-label">Acties</div>
-                <ul class="cm-list">
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Case story schrijven</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Outreach bericht opstellen</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Contactpersonen identificeren</li>
-                </ul>
-                <div class="add-item"><div class="add-icon">+</div>actie toevoegen</div>
-              </div>
-            </div>
-          </div>
-          <div class="add-campaign">+ campagne toevoegen</div>
+      <div class="acc-body">
+        <div class="cm-sub">
+          <div class="cm-sub-label">Organisaties</div>
+          <ul class="cm-list">${orgs.map(itemRow).join('')}</ul>
+          <div class="add-item" data-action="add-item" data-kind="org"><div class="add-icon">+</div>toevoegen</div>
+        </div>
+        <div class="cm-sub">
+          <div class="cm-sub-label">Acties</div>
+          <ul class="cm-list">${actions.map(itemRow).join('')}</ul>
+          <div class="add-item" data-action="add-item" data-kind="action"><div class="add-icon">+</div>actie toevoegen</div>
         </div>
       </div>
-    </div>
-
-    <!-- Sector: Energie -->
-    <div class="sector" onclick="if(event.target.closest('.mini-check')||event.target.closest('.add-item')||event.target.closest('.add-campaign')||event.target.closest('.acc'))return;if(event.target.closest('.sector-header'))this.classList.toggle('open');">
-      <div class="sector-header">
-        <div class="sector-dot" style="background:var(--green)"></div>
-        <div class="sector-name">Natuur, energie & klimaat</div>
-        <span class="sector-arrow">&#9654;</span>
+    </div>`;
+  } else {
+    return `<div class="acc" data-campaign-id="${camp.id}">
+      <div class="acc-header" data-action="toggle-acc">
+        <span class="acc-arrow">&#9654;</span>${esc(camp.name)}
+        <span class="acc-counter">${done}/${total}</span>
       </div>
-      <div class="sector-body">
-        <div class="sector-content">
-          <div class="acc" onclick="event.target.closest('.mini-check')||event.target.closest('.add-item')?null:this.classList.toggle('open')">
-            <div class="acc-header"><span class="acc-arrow">&#9654;</span>Bolt Energie<span class="acc-counter">0/5</span></div>
-            <div class="acc-body">
-              <div class="cm-sub">
-                <div class="cm-sub-label">Organisaties</div>
-                <ul class="cm-list">
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Biolectric</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Smappee</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Turbulent</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Bnewable</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Powernaut</li>
-                </ul>
-                <div class="add-item"><div class="add-icon">+</div>toevoegen</div>
-              </div>
-              <div class="cm-sub">
-                <div class="cm-sub-label">Acties</div>
-                <ul class="cm-list">
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Bolt case schrijven</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Outreach bericht opstellen</li>
-                </ul>
-                <div class="add-item"><div class="add-icon">+</div>actie toevoegen</div>
-              </div>
-            </div>
-          </div>
-          <div class="add-campaign">+ campagne toevoegen</div>
+      <div class="acc-body">
+        <div class="cm-sub">
+          <ul class="cm-list">${generic.map(itemRow).join('')}</ul>
+          <div class="add-item" data-action="add-item" data-kind="item"><div class="add-icon">+</div>toevoegen</div>
         </div>
       </div>
-    </div>
+    </div>`;
+  }
+}
 
-    <!-- Sector: For-profit -->
-    <div class="sector" onclick="if(event.target.closest('.mini-check')||event.target.closest('.add-item')||event.target.closest('.add-campaign')||event.target.closest('.acc'))return;if(event.target.closest('.sector-header'))this.classList.toggle('open');">
-      <div class="sector-header">
-        <div class="sector-dot" style="background:var(--orange)"></div>
-        <div class="sector-name">Missiegedreven for-profits</div>
-        <span class="sector-arrow">&#9654;</span>
+function sectorBlock(sector, campaigns, items) {
+  const secCampaigns = campaigns.filter(c => c.sector_id === sector.id);
+  const isPush = secCampaigns.some(c => c.kind === 'campaign');
+
+  return `<div class="sector" data-sector-id="${sector.id}">
+    <div class="sector-header" data-action="toggle-sector">
+      <div class="sector-dot" style="background:${sector.color}"></div>
+      <div class="sector-name">${esc(sector.name)}</div>
+      <span class="sector-arrow">&#9654;</span>
+    </div>
+    <div class="sector-body">
+      <div class="sector-content">
+        ${secCampaigns.map(c => campaignBlock(c, items.filter(i => i.campaign_id === c.id))).join('')}
+        ${isPush ? `<div class="add-campaign" data-action="add-campaign">+ campagne toevoegen</div>` : ''}
       </div>
-      <div class="sector-body">
-        <div class="sector-content">
-          <div class="acc" onclick="event.target.closest('.mini-check')||event.target.closest('.add-item')?null:this.classList.toggle('open')">
-            <div class="acc-header"><span class="acc-arrow">&#9654;</span>AI workshops als way-in<span class="acc-counter">0/3</span></div>
-            <div class="acc-body">
-              <div class="cm-sub">
-                <div class="cm-sub-label">Organisaties</div>
-                <ul class="cm-list">
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>___</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>___</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>___</li>
-                </ul>
-                <div class="add-item"><div class="add-icon">+</div>toevoegen</div>
-              </div>
-              <div class="cm-sub">
-                <div class="cm-sub-label">Acties</div>
-                <ul class="cm-list">
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Workshop format uitwerken (cfr. CTRG)</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Doelgroep bepalen</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Outreach bericht opstellen</li>
-                </ul>
-                <div class="add-item"><div class="add-icon">+</div>actie toevoegen</div>
-              </div>
-            </div>
-          </div>
-          <div class="add-campaign">+ campagne toevoegen</div>
+    </div>
+  </div>`;
+}
+
+function render(data) {
+  const o1 = data.objectives.find(o => o.code === 'O1');
+  const o2 = data.objectives.find(o => o.code === 'O2');
+  const krO1 = data.keyResults.filter(k => k.objective_id === o1.id);
+  const krO2 = data.keyResults.filter(k => k.objective_id === o2.id);
+  const sectorsO1 = data.sectors.filter(s => s.objective_id === o1.id);
+  const sectorsO2 = data.sectors.filter(s => s.objective_id === o2.id);
+
+  const renderKR = (kr) => `<div class="kr-row" data-kr-id="${kr.id}">
+    <div class="kr-num">KR${kr.position}</div>
+    <div class="kr-text">${esc(kr.label)}</div>
+    <input class="kr-edit ${kr.target?'':'muted'}" data-field="target" value="${esc(kr.target||'___')}" />
+    <input class="kr-edit ${kr.actual?'':'muted'}" data-field="actual" value="${esc(kr.actual||'—')}" />
+  </div>`;
+
+  app.innerHTML = `
+  <div class="grid">
+
+    <div class="card c-sales" data-obj-id="${o1.id}">
+      <div class="card-top">
+        <div class="objective-meta">
+          <div class="obj-num">1</div>
+          <div class="obj-tag">${esc(o1.type)}</div>
         </div>
+        <div class="card-title">${esc(o1.title)}</div>
       </div>
-    </div>
+      <div class="kr-list">
+        <div class="kr-row head"><div></div><div>Key Result</div><div class="kr-col-target">Doel</div><div class="kr-col-val">Actueel</div></div>
+        ${krO1.map(renderKR).join('')}
+      </div>
+      <div class="plan-divider">
+        <div class="plan-divider-label">Actieplan per sector</div>
+        <div class="plan-divider-line"></div>
+      </div>
+      ${sectorsO1.map(s => sectorBlock(s, data.campaigns, data.items)).join('')}
 
-    <!-- Andere opportuniteiten -->
-    <div class="sector" onclick="if(event.target.closest('.mini-check')||event.target.closest('.add-item'))return;if(event.target.closest('.sector-header'))this.classList.toggle('open');">
-      <div class="sector-header">
-        <div class="sector-dot" style="background:var(--muted)"></div>
-        <div class="sector-name">Andere opportuniteiten</div>
-        <span class="sector-arrow">&#9654;</span>
-      </div>
-      <div class="sector-body">
-        <div class="sector-content">
-          <ul class="cm-list">
-            <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Waterunie (De Watergroep + Farys)</li>
-            <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Koepelfusie zorg (4 federaties)</li>
-            <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Dynamate (VanRoey fusie)</li>
-            <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>DATS24 / Virya Energy</li>
-            <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Woonkoop — Plenty-campagne</li>
-            <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>CTRG — AI discovery workshop</li>
-            <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>VGC (CDUG) — relatie opbouwen</li>
-          </ul>
-          <div class="add-item"><div class="add-icon">+</div>opportuniteit toevoegen</div>
+      <div class="sector" data-opportunities="true">
+        <div class="sector-header" data-action="toggle-sector">
+          <div class="sector-dot" style="background:var(--muted)"></div>
+          <div class="sector-name">Andere opportuniteiten</div>
+          <span class="sector-arrow">&#9654;</span>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- O2: AWARENESS -->
-  <div class="card c-awareness">
-    <div class="card-top">
-      <div class="objective-meta">
-        <div class="obj-num">2</div>
-        <div class="obj-tag">Awareness</div>
-      </div>
-      <div class="card-title">TKK bekend maken bij de juiste decision makers</div>
-    </div>
-    <div class="kr-list">
-      <div class="kr-row head"><div></div><div>Key Result</div><div class="kr-col-target">Doel</div><div class="kr-col-val">Actueel</div></div>
-      <div class="kr-row"><div class="kr-num">KR1</div><div class="kr-text">Content gepubliceerd / maand</div><div class="kr-target">___</div><div class="kr-val">—</div></div>
-      <div class="kr-row"><div class="kr-num">KR2</div><div class="kr-text">Events / kwartaal</div><div class="kr-target">___</div><div class="kr-val">—</div></div>
-      <div class="kr-row"><div class="kr-num">KR3</div><div class="kr-text">Warme intro's / halfjaar</div><div class="kr-target">___</div><div class="kr-val">—</div></div>
-    </div>
-
-    <div class="plan-divider">
-      <div class="plan-divider-label">Actieplan per sector</div>
-      <div class="plan-divider-line"></div>
-    </div>
-
-    <!-- Sector: Zorg -->
-    <div class="sector open" onclick="if(event.target.closest('.mini-check')||event.target.closest('.add-item')||event.target.closest('.acc'))return;if(event.target.closest('.sector-header'))this.classList.toggle('open');">
-      <div class="sector-header">
-        <div class="sector-dot" style="background:var(--blue)"></div>
-        <div class="sector-name">Zorg, welzijn & maatschappij</div>
-        <span class="sector-arrow">&#9654;</span>
-      </div>
-      <div class="sector-body">
-        <div class="sector-content">
-          <div class="acc" onclick="event.target.closest('.mini-check')||event.target.closest('.add-item')?null:this.classList.toggle('open')">
-            <div class="acc-header"><span class="acc-arrow">&#9654;</span>Content</div>
-            <div class="acc-body">
-              <div class="cm-sub">
-                <ul class="cm-list">
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Tele-Onthaal case met impactcijfers</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Opiniestuk: digitale hulpverlening is een recht</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>VWV fusie-case</li>
-                </ul>
-                <div class="add-item"><div class="add-icon">+</div>toevoegen</div>
-              </div>
-            </div>
-          </div>
-          <div class="acc" onclick="event.target.closest('.mini-check')||event.target.closest('.add-item')?null:this.classList.toggle('open')">
-            <div class="acc-header"><span class="acc-arrow">&#9654;</span>Events</div>
-            <div class="acc-body">
-              <div class="cm-sub">
-                <ul class="cm-list">
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Inspire Health & Care (april)</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Voka Health Community (sept)</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>In4Care congres</li>
-                </ul>
-                <div class="add-item"><div class="add-icon">+</div>toevoegen</div>
-              </div>
-            </div>
-          </div>
-          <div class="acc" onclick="event.target.closest('.mini-check')||event.target.closest('.add-item')?null:this.classList.toggle('open')">
-            <div class="acc-header"><span class="acc-arrow">&#9654;</span>Warme intro's</div>
-            <div class="acc-body">
-              <div class="cm-sub">
-                <ul class="cm-list">
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>VWV → koepelfusie zorg</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Pleegzorg → Agentschap Opgroeien</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Tele-Onthaal → andere hulplijnen</li>
-                </ul>
-                <div class="add-item"><div class="add-icon">+</div>toevoegen</div>
-              </div>
-            </div>
+        <div class="sector-body">
+          <div class="sector-content">
+            <ul class="cm-list">
+              ${data.opportunities.map(o => `<li data-opp-id="${o.id}">
+                <div class="mini-check ${o.checked?'checked':''}" data-action="toggle-opp"></div>
+                <div class="item-label" contenteditable="true" data-action="edit-opp">${esc(o.label)}</div>
+                <span class="item-delete" data-action="delete-opp">×</span>
+              </li>`).join('')}
+            </ul>
+            <div class="add-item" data-action="add-opp"><div class="add-icon">+</div>opportuniteit toevoegen</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Sector: Energie -->
-    <div class="sector" onclick="if(event.target.closest('.mini-check')||event.target.closest('.add-item')||event.target.closest('.acc'))return;if(event.target.closest('.sector-header'))this.classList.toggle('open');">
-      <div class="sector-header">
-        <div class="sector-dot" style="background:var(--green)"></div>
-        <div class="sector-name">Natuur, energie & klimaat</div>
-        <span class="sector-arrow">&#9654;</span>
-      </div>
-      <div class="sector-body">
-        <div class="sector-content">
-          <div class="acc" onclick="event.target.closest('.mini-check')||event.target.closest('.add-item')?null:this.classList.toggle('open')">
-            <div class="acc-header"><span class="acc-arrow">&#9654;</span>Content</div>
-            <div class="acc-body">
-              <div class="cm-sub">
-                <ul class="cm-list">
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Bolt Energie case</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Opiniestuk: cleantech-merken communiceren onder hun gewicht</li>
-                </ul>
-                <div class="add-item"><div class="add-icon">+</div>toevoegen</div>
-              </div>
-            </div>
-          </div>
-          <div class="acc" onclick="event.target.closest('.mini-check')||event.target.closest('.add-item')?null:this.classList.toggle('open')">
-            <div class="acc-header"><span class="acc-arrow">&#9654;</span>Events</div>
-            <div class="acc-body">
-              <div class="cm-sub">
-                <ul class="cm-list">
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>The Shift events (doorlopend)</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Flux50 events</li>
-                </ul>
-                <div class="add-item"><div class="add-icon">+</div>toevoegen</div>
-              </div>
-            </div>
-          </div>
-          <div class="acc" onclick="event.target.closest('.mini-check')||event.target.closest('.add-item')?null:this.classList.toggle('open')">
-            <div class="acc-header"><span class="acc-arrow">&#9654;</span>Warme intro's</div>
-            <div class="acc-body">
-              <div class="cm-sub">
-                <ul class="cm-list">
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Fluvius → Waterunie</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Colruyt → DATS24/Virya</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>VITO → cleantech netwerk</li>
-                </ul>
-                <div class="add-item"><div class="add-icon">+</div>toevoegen</div>
-              </div>
-            </div>
-          </div>
+    <div class="card c-awareness" data-obj-id="${o2.id}">
+      <div class="card-top">
+        <div class="objective-meta">
+          <div class="obj-num">2</div>
+          <div class="obj-tag">${esc(o2.type)}</div>
         </div>
+        <div class="card-title">${esc(o2.title)}</div>
       </div>
+      <div class="kr-list">
+        <div class="kr-row head"><div></div><div>Key Result</div><div class="kr-col-target">Doel</div><div class="kr-col-val">Actueel</div></div>
+        ${krO2.map(renderKR).join('')}
+      </div>
+      <div class="plan-divider">
+        <div class="plan-divider-label">Actieplan per sector</div>
+        <div class="plan-divider-line"></div>
+      </div>
+      ${sectorsO2.map(s => sectorBlock(s, data.campaigns, data.items)).join('')}
     </div>
 
-    <!-- Sector: For-profit -->
-    <div class="sector" onclick="if(event.target.closest('.mini-check')||event.target.closest('.add-item')||event.target.closest('.acc'))return;if(event.target.closest('.sector-header'))this.classList.toggle('open');">
-      <div class="sector-header">
-        <div class="sector-dot" style="background:var(--orange)"></div>
-        <div class="sector-name">Missiegedreven for-profits</div>
-        <span class="sector-arrow">&#9654;</span>
-      </div>
-      <div class="sector-body">
-        <div class="sector-content">
-          <div class="acc" onclick="event.target.closest('.mini-check')||event.target.closest('.add-item')?null:this.classList.toggle('open')">
-            <div class="acc-header"><span class="acc-arrow">&#9654;</span>Content</div>
-            <div class="acc-body">
-              <div class="cm-sub">
-                <ul class="cm-list">
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Opiniestuk: impact-bedrijven verdienen een sterker merk</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>B Corp peer-to-peer verhaal (Statik = B Corp)</li>
-                </ul>
-                <div class="add-item"><div class="add-icon">+</div>toevoegen</div>
-              </div>
-            </div>
-          </div>
-          <div class="acc" onclick="event.target.closest('.mini-check')||event.target.closest('.add-item')?null:this.classList.toggle('open')">
-            <div class="acc-header"><span class="acc-arrow">&#9654;</span>Events</div>
-            <div class="acc-body">
-              <div class="cm-sub">
-                <ul class="cm-list">
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Trends Impact Awards (november)</li>
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>B Lab Benelux events</li>
-                </ul>
-                <div class="add-item"><div class="add-icon">+</div>toevoegen</div>
-              </div>
-            </div>
-          </div>
-          <div class="acc" onclick="event.target.closest('.mini-check')||event.target.closest('.add-item')?null:this.classList.toggle('open')">
-            <div class="acc-header"><span class="acc-arrow">&#9654;</span>Warme intro's</div>
-            <div class="acc-body">
-              <div class="cm-sub">
-                <ul class="cm-list">
-                  <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>B Corp netwerk (Statik is zelf B Corp)</li>
-                </ul>
-                <div class="add-item"><div class="add-icon">+</div>toevoegen</div>
-              </div>
-            </div>
-          </div>
+    <div class="card c-support">
+      <div class="card-top">
+        <div class="objective-meta">
+          <div class="obj-num">+</div>
+          <div class="obj-tag">Ondersteunend</div>
         </div>
+        <div class="card-title">Projecten</div>
+      </div>
+      <div class="support-list">
+        <ul class="cm-list">
+          ${data.supporting.map(s => `<li data-supp-id="${s.id}">
+            <div class="mini-check ${s.checked?'checked':''}" data-action="toggle-supp"></div>
+            <div class="item-label" contenteditable="true" data-action="edit-supp">${esc(s.label)}</div>
+            <span class="item-delete" data-action="delete-supp">×</span>
+          </li>`).join('')}
+        </ul>
+        <div class="add-item" data-action="add-supp"><div class="add-icon">+</div>project toevoegen</div>
       </div>
     </div>
-  </div>
 
-  <!-- SUPPORTING PROJECTS -->
-  <div class="card c-support">
-    <div class="card-top">
-      <div class="objective-meta">
-        <div class="obj-num">+</div>
-        <div class="obj-tag">Ondersteunend</div>
-      </div>
-      <div class="card-title">Projecten</div>
-    </div>
-    <div class="support-list">
-      <ul class="cm-list">
-        <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>TKK-salesverhaal valideren</li>
-        <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Sales deck in TKK-stijl</li>
-        <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Cases met impactcijfers op website</li>
-        <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Entry-diensten uitwerken</li>
-        <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Prospect-lijsten samenvoegen</li>
-        <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Forecast farming afronden</li>
-        <li><div class="mini-check" onclick="this.classList.toggle('checked')"></div>Hunters-meeting structureel inplannen</li>
-      </ul>
-      <div class="add-item"><div class="add-icon">+</div>project toevoegen</div>
-    </div>
-  </div>
+  </div>`;
+}
 
-</div>
+async function handleClick(e) {
+  const actionEl = e.target.closest('[data-action]');
+  if (!actionEl) return;
+  const action = actionEl.dataset.action;
 
-<div class="footer">TKK Hunting · 2026 · V3</div>
-</div>
+  if (action === 'toggle-sector') {
+    actionEl.closest('.sector').classList.toggle('open');
+    return;
+  }
+  if (action === 'toggle-acc') {
+    actionEl.closest('.acc').classList.toggle('open');
+    return;
+  }
+  if (action === 'toggle-item') {
+    const li = actionEl.closest('[data-item-id]');
+    const id = +li.dataset.itemId;
+    const checked = !actionEl.classList.contains('checked');
+    actionEl.classList.toggle('checked', checked);
+    const { error } = await sb.from('items').update({ checked }).eq('id', id);
+    if (error) { showSaved(false); return; }
+    updateCounters(li);
+    showSaved();
+  }
+  if (action === 'toggle-opp') {
+    const id = +actionEl.closest('[data-opp-id]').dataset.oppId;
+    const checked = !actionEl.classList.contains('checked');
+    actionEl.classList.toggle('checked', checked);
+    const { error } = await sb.from('opportunities').update({ checked }).eq('id', id);
+    showSaved(!error);
+  }
+  if (action === 'toggle-supp') {
+    const id = +actionEl.closest('[data-supp-id]').dataset.suppId;
+    const checked = !actionEl.classList.contains('checked');
+    actionEl.classList.toggle('checked', checked);
+    const { error } = await sb.from('supporting_projects').update({ checked }).eq('id', id);
+    showSaved(!error);
+  }
+  if (action === 'add-item') {
+    const campId = +actionEl.closest('.acc').dataset.campaignId;
+    const kind = actionEl.dataset.kind;
+    const label = prompt(kind === 'action' ? 'Nieuwe actie:' : kind === 'org' ? 'Nieuwe organisatie:' : 'Nieuw item:');
+    if (!label) return;
+    const { error } = await sb.from('items').insert({ campaign_id: campId, label, kind, position: 999 });
+    if (error) { showSaved(false); return; }
+    await reload();
+    showSaved();
+  }
+  if (action === 'add-campaign') {
+    const sectorId = +actionEl.closest('.sector').dataset.sectorId;
+    const name = prompt('Naam van de campagne:');
+    if (!name) return;
+    const { error } = await sb.from('campaigns').insert({ sector_id: sectorId, name, kind: 'campaign', position: 999 });
+    if (error) { showSaved(false); return; }
+    await reload();
+    showSaved();
+  }
+  if (action === 'add-opp') {
+    const label = prompt('Nieuwe opportuniteit:');
+    if (!label) return;
+    const { error } = await sb.from('opportunities').insert({ label, position: 999 });
+    if (error) { showSaved(false); return; }
+    await reload();
+    showSaved();
+  }
+  if (action === 'add-supp') {
+    const label = prompt('Nieuw project:');
+    if (!label) return;
+    const { error } = await sb.from('supporting_projects').insert({ label, position: 999 });
+    if (error) { showSaved(false); return; }
+    await reload();
+    showSaved();
+  }
+  if (action === 'delete-item') {
+    if (!confirm('Verwijderen?')) return;
+    const id = +actionEl.closest('[data-item-id]').dataset.itemId;
+    const { error } = await sb.from('items').delete().eq('id', id);
+    if (error) { showSaved(false); return; }
+    await reload();
+    showSaved();
+  }
+  if (action === 'delete-opp') {
+    if (!confirm('Verwijderen?')) return;
+    const id = +actionEl.closest('[data-opp-id]').dataset.oppId;
+    const { error } = await sb.from('opportunities').delete().eq('id', id);
+    if (error) { showSaved(false); return; }
+    await reload();
+    showSaved();
+  }
+  if (action === 'delete-supp') {
+    if (!confirm('Verwijderen?')) return;
+    const id = +actionEl.closest('[data-supp-id]').dataset.suppId;
+    const { error } = await sb.from('supporting_projects').delete().eq('id', id);
+    if (error) { showSaved(false); return; }
+    await reload();
+    showSaved();
+  }
+}
+
+function updateCounters(itemLi) {
+  const acc = itemLi.closest('.acc');
+  if (!acc) return;
+  const all = acc.querySelectorAll('.mini-check').length;
+  const done = acc.querySelectorAll('.mini-check.checked').length;
+  const counter = acc.querySelector('.acc-counter');
+  if (counter) counter.textContent = `${done}/${all}`;
+}
+
+async function handleBlur(e) {
+  const target = e.target;
+  if (target.classList.contains('kr-edit')) {
+    const row = target.closest('[data-kr-id]');
+    const id = +row.dataset.krId;
+    const field = target.dataset.field;
+    let value = target.value.trim();
+    if (value === '___' || value === '—' || value === '') value = null;
+    const { error } = await sb.from('key_results').update({ [field]: value }).eq('id', id);
+    showSaved(!error);
+    target.classList.toggle('muted', !value);
+  }
+  if (target.dataset.action === 'edit-item') {
+    const id = +target.closest('[data-item-id]').dataset.itemId;
+    const label = target.textContent.trim();
+    if (!label) return;
+    const { error } = await sb.from('items').update({ label }).eq('id', id);
+    showSaved(!error);
+  }
+  if (target.dataset.action === 'edit-opp') {
+    const id = +target.closest('[data-opp-id]').dataset.oppId;
+    const label = target.textContent.trim();
+    if (!label) return;
+    const { error } = await sb.from('opportunities').update({ label }).eq('id', id);
+    showSaved(!error);
+  }
+  if (target.dataset.action === 'edit-supp') {
+    const id = +target.closest('[data-supp-id]').dataset.suppId;
+    const label = target.textContent.trim();
+    if (!label) return;
+    const { error } = await sb.from('supporting_projects').update({ label }).eq('id', id);
+    showSaved(!error);
+  }
+}
+
+function handleKeydown(e) {
+  if (e.key === 'Enter' && e.target.getAttribute('contenteditable') === 'true') {
+    e.preventDefault();
+    e.target.blur();
+  }
+  if (e.key === 'Enter' && e.target.classList.contains('kr-edit')) {
+    e.target.blur();
+  }
+}
+
+async function reload() {
+  const data = await loadData();
+  render(data);
+}
+
+app.addEventListener('click', handleClick);
+app.addEventListener('blur', handleBlur, true);
+app.addEventListener('keydown', handleKeydown);
+
+reload().catch(err => {
+  console.error(err);
+  app.innerHTML = `<div class="loading">Fout bij laden: ${err.message}. Check console.</div>`;
+});
+</script>
 </body>
 </html>
