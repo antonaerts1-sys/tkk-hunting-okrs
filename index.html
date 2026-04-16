@@ -25,14 +25,17 @@
   }
 
   :root {
-    --green:#00B800; --blue:#3391FF; --orange:#FC470F; --pink:#FF00DB;
+    --green:#00B800; --green-soft:#E5F5E5; --green-bar:#6BD166;
+    --blue:#3391FF; --orange:#FC470F; --pink:#FF00DB;
     --black:#111; --white:#fff; --bg:#F7F3EC;
-    --surface:#fff; --border:#E5E7E4; --border-soft:#EEEFEC; --muted:#A0A3A0; --light:#555;
+    --surface:#fff; --border:#E5E7E4; --border-soft:#EEEFEC;
+    --muted:#A0A3A0; --light:#555;
     --hover:#F5F6F3; --chip:#F0F1EE;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{font-family:'GT Flexa',sans-serif;background:var(--bg);color:var(--black);line-height:1.5;font-weight:400;-webkit-font-smoothing:antialiased;}
   h1,.card-title,.sector-name,.metric-num{font-family:'GT Flexa Condensed','GT Flexa',sans-serif;font-weight:700;letter-spacing:-0.02em;}
+  input,button{font-family:inherit;}
 
   .page{max-width:1440px;margin:0 auto;padding:40px 24px 80px;}
   .loading{text-align:center;padding:100px 20px;color:var(--muted);font-size:14px;}
@@ -52,6 +55,9 @@
   .obj-tag{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
   .card-title{font-size:30px;line-height:1.05;}
   .card.c-support .card-title{font-size:22px;}
+  .card.c-sales .obj-num{background:var(--green);}
+  .card.c-awareness .obj-num{background:var(--blue);}
+  .card.c-support .obj-num{background:var(--pink);}
 
   .kr-list{padding:4px 30px 20px;}
   .kr-row{display:grid;grid-template-columns:20px 1fr 80px 80px;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft);align-items:center;}
@@ -61,7 +67,7 @@
   .kr-row.head .kr-col-val,.kr-row.head .kr-col-target{text-align:right;}
   .kr-num{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:0.05em;}
   .kr-text{font-size:13px;font-weight:500;color:var(--black);}
-  .kr-edit{font-size:13px;font-weight:700;color:var(--black);text-align:right;font-variant-numeric:tabular-nums;border:none;background:transparent;width:100%;font-family:inherit;cursor:text;padding:2px 6px;border-radius:4px;}
+  .kr-edit{font-size:13px;font-weight:700;color:var(--black);text-align:right;font-variant-numeric:tabular-nums;border:none;background:transparent;width:100%;cursor:text;padding:2px 6px;border-radius:4px;}
   .kr-edit:hover{background:var(--hover);}
   .kr-edit:focus{background:var(--hover);outline:2px solid var(--orange);}
   .kr-edit.muted{color:var(--muted);}
@@ -82,49 +88,89 @@
   .sector.open .sector-body{display:block;}
   .sector-content{padding:0 30px 16px 52px;}
 
-  .acc{border-top:1px solid var(--border-soft);}
+  .acc{border-top:1px solid var(--border-soft);position:relative;}
   .acc:first-child{border-top:none;}
-  .acc-header{display:flex;align-items:center;gap:10px;padding:11px 0;cursor:pointer;font-size:13px;font-weight:700;user-select:none;flex:1;}
-  .acc-counter{font-size:10px;font-weight:700;color:var(--muted);background:var(--chip);padding:2px 9px;border-radius:99px;margin-left:auto;letter-spacing:0.02em;}
-  .acc-header:hover{color:var(--orange);}
+  .acc-header{display:flex;align-items:center;gap:10px;padding:11px 0;cursor:pointer;font-size:13px;font-weight:700;user-select:none;}
+  .acc-header:hover .acc-name{color:var(--orange);}
   .acc-arrow{font-size:9px;color:var(--muted);transition:transform 0.2s;flex-shrink:0;}
   .acc.open .acc-arrow{transform:rotate(90deg);}
+  .acc-name{flex:1;}
+  .acc-progress{display:flex;gap:10px;align-items:center;margin-left:auto;margin-right:4px;}
+  .prog-item{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:0.02em;}
+  .prog-bar{width:40px;height:4px;background:var(--chip);border-radius:99px;overflow:hidden;}
+  .prog-bar-fill{height:100%;background:var(--green-bar);transition:width 0.3s;}
+  .acc-menu-btn{opacity:0;background:transparent;border:none;padding:4px 6px;font-size:14px;color:var(--muted);cursor:pointer;border-radius:4px;line-height:1;transition:all 0.12s;}
+  .acc:hover .acc-menu-btn{opacity:1;}
+  .acc-menu-btn:hover{background:var(--chip);color:var(--black);}
   .acc-body{display:none;padding:2px 0 8px 0;}
   .acc.open .acc-body{display:block;}
+
+  .acc.done .acc-name{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(160,163,160,0.5);}
+  .acc.done .prog-bar-fill{background:var(--muted);}
 
   .cm-sub{padding:6px 0 4px 20px;}
   .cm-sub-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:6px;margin-top:4px;}
   .cm-list{list-style:none;}
-  .cm-list li{display:flex;gap:10px;padding:5px 0;font-size:12.5px;align-items:center;color:var(--black);}
-  .item-label{flex:1;cursor:text;padding:2px 4px;border-radius:3px;}
+  .cm-list li{display:flex;gap:10px;padding:5px 0;font-size:12.5px;align-items:center;color:var(--black);position:relative;}
+  .item-label{flex:1;cursor:text;padding:2px 4px;border-radius:3px;min-height:18px;}
   .item-label:hover{background:var(--hover);}
   .item-label[contenteditable="true"]:focus{background:var(--hover);outline:1px solid var(--orange);}
-  .item-delete{opacity:0;font-size:14px;color:var(--muted);cursor:pointer;padding:0 8px;border-radius:3px;transition:opacity 0.1s;line-height:1;}
-  .cm-list li:hover .item-delete{opacity:1;}
-  .item-delete:hover{color:var(--orange);}
+  .cm-list li.checked .item-label{color:var(--muted);text-decoration:line-through;}
   .mini-check{width:14px;height:14px;border:2px solid #CCCEC9;border-radius:3px;flex-shrink:0;cursor:pointer;transition:all 0.1s;position:relative;}
   .mini-check:hover{border-color:var(--orange);}
   .mini-check.checked{background:var(--green);border-color:var(--green);}
-  .mini-check.checked::after{content:'';position:absolute;left:3px;top:0px;width:4px;height:8px;border:solid white;border-width:0 2px 2px 0;transform:rotate(45deg);}
-  .add-item{display:flex;align-items:center;gap:10px;padding:5px 0;font-size:12px;color:var(--muted);cursor:pointer;font-weight:500;}
-  .add-item:hover{color:var(--orange);}
+  .mini-check.checked::after{content:'';position:absolute;left:3px;top:0;width:4px;height:8px;border:solid white;border-width:0 2px 2px 0;transform:rotate(45deg);}
+
+  .row-menu-btn{opacity:0;background:transparent;border:none;padding:2px 6px;font-size:14px;color:var(--muted);cursor:pointer;border-radius:3px;line-height:1;margin-left:auto;}
+  .cm-list li:hover .row-menu-btn{opacity:1;}
+  .row-menu-btn:hover{background:var(--chip);color:var(--black);}
+
+  /* Inline add row */
+  .add-row{padding:5px 0;display:flex;align-items:center;gap:10px;}
+  .add-btn{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);cursor:pointer;font-weight:500;background:none;border:none;padding:0;}
+  .add-btn:hover{color:var(--orange);}
   .add-icon{width:14px;height:14px;border:2px dashed #CCCEC9;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#BBB;flex-shrink:0;line-height:1;}
-  .add-campaign{padding:10px 0;margin-top:6px;border-top:1px dashed var(--border);font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;text-align:center;letter-spacing:0.02em;}
+  .add-input{flex:1;font-size:12.5px;border:none;outline:none;background:var(--hover);padding:4px 8px;border-radius:3px;font-weight:400;color:var(--black);}
+  .add-input:focus{outline:1px solid var(--orange);}
+
+  .add-campaign-wrap{padding:10px 0;margin-top:6px;border-top:1px dashed var(--border);}
+  .add-campaign{font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;text-align:center;letter-spacing:0.02em;background:none;border:none;width:100%;padding:4px 0;}
   .add-campaign:hover{color:var(--orange);}
+  .add-campaign-input{width:100%;font-size:13px;font-weight:700;border:none;outline:1px solid var(--orange);background:var(--hover);padding:6px 10px;border-radius:4px;text-align:center;}
 
   .card.c-support .card-top{padding-bottom:20px;}
   .support-list{padding:8px 24px 20px;}
   .support-list .cm-list li{padding:8px 0;font-size:13px;border-bottom:1px solid var(--border-soft);}
   .support-list .cm-list li:last-child{border-bottom:none;}
-  .support-list .add-item{padding:12px 0 4px;}
+  .support-list .add-row{padding:12px 0 4px;}
 
-  .card.c-sales .obj-num{background:var(--green);}
-  .card.c-awareness .obj-num{background:var(--blue);}
-  .card.c-support .obj-num{background:var(--pink);}
+  /* Done accordion */
+  .done-group{border-top:1px solid var(--border-soft);}
+  .done-group-header{display:flex;align-items:center;gap:10px;padding:10px 30px;cursor:pointer;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;user-select:none;}
+  .done-group-header:hover{background:var(--hover);}
+  .done-group-arrow{font-size:9px;transition:transform 0.2s;}
+  .done-group.open .done-group-arrow{transform:rotate(90deg);}
+  .done-group-body{display:none;}
+  .done-group.open .done-group-body{display:block;}
 
-  .save-indicator{position:fixed;bottom:20px;right:20px;background:var(--black);color:white;padding:10px 16px;border-radius:99px;font-size:12px;font-weight:600;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:100;}
-  .save-indicator.show{opacity:1;}
-  .save-indicator.error{background:#CC0000;}
+  /* Empty state */
+  .empty{padding:20px 0;text-align:center;}
+  .empty-text{font-size:12px;color:var(--muted);margin-bottom:10px;}
+  .empty-cta{display:inline-block;font-size:12px;color:var(--orange);font-weight:700;cursor:pointer;padding:6px 14px;border:1px dashed var(--border);border-radius:99px;background:none;}
+  .empty-cta:hover{background:var(--hover);}
+
+  /* Contextmenu */
+  .ctx-menu{position:fixed;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.12);padding:4px;min-width:160px;font-size:13px;}
+  .ctx-menu button{display:block;width:100%;text-align:left;background:none;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;color:var(--black);font-size:13px;}
+  .ctx-menu button:hover{background:var(--hover);}
+  .ctx-menu button.danger:hover{background:#FFEBE5;color:var(--orange);}
+  .ctx-menu .divider{height:1px;background:var(--border-soft);margin:4px 0;}
+
+  /* Toast */
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--black);color:white;padding:14px 20px;border-radius:99px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:14px;opacity:0;transform:translateY(10px);transition:all 0.2s;pointer-events:none;z-index:300;max-width:400px;}
+  .toast.show{opacity:1;transform:translateY(0);pointer-events:auto;}
+  .toast-action{background:none;border:none;color:var(--orange);font-weight:700;cursor:pointer;font-size:13px;padding:0;}
+  .toast-action:hover{text-decoration:underline;}
 
   .footer{text-align:center;font-size:11px;color:var(--muted);padding:32px 0 0;letter-spacing:0.04em;}
 
@@ -138,7 +184,7 @@
     .header{padding:28px 24px;}
     .header h1{font-size:34px;}
     .card-top,.sector-content{padding-left:20px;padding-right:20px;}
-    .kr-row,.sector-header{padding-left:20px;padding-right:20px;}
+    .kr-row,.sector-header,.done-group-header{padding-left:20px;padding-right:20px;}
   }
 </style>
 </head>
@@ -155,7 +201,10 @@
   <div class="footer">TKK Hunting · 2026 · Live</div>
 </div>
 
-<div class="save-indicator" id="save-indicator">Opgeslagen</div>
+<div class="toast" id="toast">
+  <span id="toast-msg">Verwijderd</span>
+  <button class="toast-action" id="toast-undo">Ongedaan maken</button>
+</div>
 
 <script type="module">
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -165,16 +214,16 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const app = document.getElementById('app');
-const indicator = document.getElementById('save-indicator');
+const toastEl = document.getElementById('toast');
+const toastMsg = document.getElementById('toast-msg');
+const toastUndoBtn = document.getElementById('toast-undo');
 
-let saveTimer;
-function showSaved(ok=true) {
-  clearTimeout(saveTimer);
-  indicator.textContent = ok ? 'Opgeslagen' : 'Fout bij opslaan';
-  indicator.classList.toggle('error', !ok);
-  indicator.classList.add('show');
-  saveTimer = setTimeout(() => indicator.classList.remove('show'), 1500);
-}
+// ─── State ───
+let data = {};
+let pendingDelete = null; // { table, record, timer }
+
+// ─── Helpers ───
+const esc = s => (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 async function loadData() {
   const [objectives, keyResults, sectors, campaigns, items, opportunities, supporting] = await Promise.all([
@@ -186,7 +235,7 @@ async function loadData() {
     sb.from('opportunities').select('*').order('position'),
     sb.from('supporting_projects').select('*').order('position')
   ]);
-  return {
+  data = {
     objectives: objectives.data || [],
     keyResults: keyResults.data || [],
     sectors: sectors.data || [],
@@ -197,61 +246,154 @@ async function loadData() {
   };
 }
 
-const esc = s => (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+// ─── Toast ───
+function showToast(msg, undoFn) {
+  toastMsg.textContent = msg;
+  toastUndoBtn.style.display = undoFn ? '' : 'none';
+  toastEl.classList.add('show');
+  clearTimeout(showToast._t);
+  toastUndoBtn.onclick = () => {
+    undoFn();
+    hideToast();
+  };
+  showToast._t = setTimeout(() => hideToast(), 6000);
+}
+function hideToast() {
+  toastEl.classList.remove('show');
+}
 
+// ─── Context menu ───
+let currentMenu = null;
+function closeMenu() { if (currentMenu) { currentMenu.remove(); currentMenu = null; } }
+document.addEventListener('click', e => {
+  if (currentMenu && !e.target.closest('.ctx-menu') && !e.target.closest('[data-menu-btn]')) {
+    closeMenu();
+  }
+});
+
+function openMenu(x, y, items) {
+  closeMenu();
+  const menu = document.createElement('div');
+  menu.className = 'ctx-menu';
+  menu.innerHTML = items.map((it, i) =>
+    it.divider ? '<div class="divider"></div>' :
+    `<button data-idx="${i}" class="${it.danger?'danger':''}">${esc(it.label)}</button>`
+  ).join('');
+  document.body.appendChild(menu);
+  menu.style.left = Math.min(x, window.innerWidth - 180) + 'px';
+  menu.style.top = Math.min(y, window.innerHeight - menu.offsetHeight - 10) + 'px';
+  menu.onclick = e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const it = items[+btn.dataset.idx];
+    if (it.action) it.action();
+    closeMenu();
+  };
+  currentMenu = menu;
+}
+
+// ─── Render ───
 function itemRow(item) {
-  return `<li data-item-id="${item.id}">
+  return `<li data-item-id="${item.id}" class="${item.checked?'checked':''}">
     <div class="mini-check ${item.checked?'checked':''}" data-action="toggle-item"></div>
     <div class="item-label" contenteditable="true" data-action="edit-item">${esc(item.label)}</div>
-    <span class="item-delete" data-action="delete-item">×</span>
+    <button class="row-menu-btn" data-menu-btn data-action="item-menu" title="Opties">⋮</button>
   </li>`;
+}
+
+function progressBar(done, total) {
+  const pct = total > 0 ? (done/total*100) : 0;
+  return `<div class="prog-bar"><div class="prog-bar-fill" style="width:${pct}%"></div></div>`;
 }
 
 function campaignBlock(camp, itemsForCamp) {
   const orgs = itemsForCamp.filter(i => i.kind === 'org');
   const actions = itemsForCamp.filter(i => i.kind === 'action');
   const generic = itemsForCamp.filter(i => i.kind === 'item');
-  const total = itemsForCamp.length;
-  const done = itemsForCamp.filter(i => i.checked).length;
+  const orgDone = orgs.filter(i => i.checked).length;
+  const actDone = actions.filter(i => i.checked).length;
+  const genDone = generic.filter(i => i.checked).length;
+  const isDone = camp.done;
 
+  let progressHtml = '';
   if (camp.kind === 'campaign') {
-    return `<div class="acc" data-campaign-id="${camp.id}">
-      <div class="acc-header" data-action="toggle-acc">
-        <span class="acc-arrow">&#9654;</span>${esc(camp.name)}
-        <span class="acc-counter">${done}/${total}</span>
-      </div>
-      <div class="acc-body">
-        <div class="cm-sub">
-          <div class="cm-sub-label">Organisaties</div>
-          <ul class="cm-list">${orgs.map(itemRow).join('')}</ul>
-          <div class="add-item" data-action="add-item" data-kind="org"><div class="add-icon">+</div>toevoegen</div>
-        </div>
-        <div class="cm-sub">
-          <div class="cm-sub-label">Acties</div>
-          <ul class="cm-list">${actions.map(itemRow).join('')}</ul>
-          <div class="add-item" data-action="add-item" data-kind="action"><div class="add-icon">+</div>actie toevoegen</div>
-        </div>
-      </div>
+    progressHtml = `<div class="acc-progress">
+      ${orgs.length ? `<div class="prog-item">Org ${orgDone}/${orgs.length}${progressBar(orgDone, orgs.length)}</div>` : ''}
+      ${actions.length ? `<div class="prog-item">Act ${actDone}/${actions.length}${progressBar(actDone, actions.length)}</div>` : ''}
     </div>`;
   } else {
-    return `<div class="acc" data-campaign-id="${camp.id}">
-      <div class="acc-header" data-action="toggle-acc">
-        <span class="acc-arrow">&#9654;</span>${esc(camp.name)}
-        <span class="acc-counter">${done}/${total}</span>
-      </div>
-      <div class="acc-body">
-        <div class="cm-sub">
-          <ul class="cm-list">${generic.map(itemRow).join('')}</ul>
-          <div class="add-item" data-action="add-item" data-kind="item"><div class="add-icon">+</div>toevoegen</div>
+    progressHtml = generic.length ? `<div class="acc-progress"><div class="prog-item">${genDone}/${generic.length}${progressBar(genDone, generic.length)}</div></div>` : '';
+  }
+
+  let bodyHtml;
+  if (camp.kind === 'campaign') {
+    bodyHtml = `
+      <div class="cm-sub">
+        <div class="cm-sub-label">Organisaties</div>
+        <ul class="cm-list">${orgs.map(itemRow).join('')}</ul>
+        <div class="add-row" data-add-slot="item" data-kind="org" data-campaign-id="${camp.id}">
+          <button class="add-btn" data-action="show-add-input"><span class="add-icon">+</span>organisatie toevoegen</button>
         </div>
       </div>
-    </div>`;
+      <div class="cm-sub">
+        <div class="cm-sub-label">Acties</div>
+        <ul class="cm-list">${actions.map(itemRow).join('')}</ul>
+        <div class="add-row" data-add-slot="item" data-kind="action" data-campaign-id="${camp.id}">
+          <button class="add-btn" data-action="show-add-input"><span class="add-icon">+</span>actie toevoegen</button>
+        </div>
+      </div>`;
+  } else {
+    bodyHtml = `
+      <div class="cm-sub">
+        <ul class="cm-list">${generic.map(itemRow).join('')}</ul>
+        <div class="add-row" data-add-slot="item" data-kind="item" data-campaign-id="${camp.id}">
+          <button class="add-btn" data-action="show-add-input"><span class="add-icon">+</span>toevoegen</button>
+        </div>
+      </div>`;
   }
+
+  return `<div class="acc ${isDone?'done':''}" data-campaign-id="${camp.id}" data-camp-done="${isDone}">
+    <div class="acc-header">
+      <span class="acc-arrow" data-action="toggle-acc">&#9654;</span>
+      <span class="acc-name" data-action="toggle-acc">${esc(camp.name)}</span>
+      ${progressHtml}
+      <button class="acc-menu-btn" data-menu-btn data-action="campaign-menu">⋮</button>
+    </div>
+    <div class="acc-body">${bodyHtml}</div>
+  </div>`;
 }
 
-function sectorBlock(sector, campaigns, items, isFirst) {
-  const secCampaigns = campaigns.filter(c => c.sector_id === sector.id);
-  const isPush = secCampaigns.some(c => c.kind === 'campaign');
+function sectorBlock(sector, isFirst) {
+  const allCampaigns = data.campaigns.filter(c => c.sector_id === sector.id);
+  const active = allCampaigns.filter(c => !c.done);
+  const done = allCampaigns.filter(c => c.done);
+  const isPush = allCampaigns.some(c => c.kind === 'campaign') || allCampaigns.length === 0;
+
+  const activeBlocks = active.map(c => campaignBlock(c, data.items.filter(i => i.campaign_id === c.id))).join('');
+
+  const emptyState = active.length === 0 && done.length === 0 ? `
+    <div class="empty">
+      <div class="empty-text">Nog geen campagnes in deze sector.</div>
+      <button class="empty-cta" data-action="show-add-campaign" data-sector-id="${sector.id}">+ Nieuwe campagne</button>
+    </div>` : '';
+
+  const addCampaign = active.length > 0 || done.length > 0 ? `
+    <div class="add-campaign-wrap" data-add-campaign-slot data-sector-id="${sector.id}">
+      <button class="add-campaign" data-action="show-add-campaign">+ campagne toevoegen</button>
+    </div>` : '';
+
+  const doneGroup = done.length > 0 ? `
+    <div class="done-group">
+      <div class="done-group-header" data-action="toggle-done-group">
+        <span class="done-group-arrow">&#9654;</span>
+        Afgeronde campagnes (${done.length})
+      </div>
+      <div class="done-group-body">
+        <div class="sector-content">
+          ${done.map(c => campaignBlock(c, data.items.filter(i => i.campaign_id === c.id))).join('')}
+        </div>
+      </div>
+    </div>` : '';
 
   return `<div class="sector${isFirst?' open':''}" data-sector-id="${sector.id}">
     <div class="sector-header" data-action="toggle-sector">
@@ -261,14 +403,32 @@ function sectorBlock(sector, campaigns, items, isFirst) {
     </div>
     <div class="sector-body">
       <div class="sector-content">
-        ${secCampaigns.map(c => campaignBlock(c, items.filter(i => i.campaign_id === c.id))).join('')}
-        ${isPush ? `<div class="add-campaign" data-action="add-campaign">+ campagne toevoegen</div>` : ''}
+        ${activeBlocks}
+        ${emptyState}
+        ${addCampaign}
       </div>
+      ${doneGroup}
     </div>
   </div>`;
 }
 
-function render(data) {
+function oppRow(o) {
+  return `<li data-opp-id="${o.id}" class="${o.checked?'checked':''}">
+    <div class="mini-check ${o.checked?'checked':''}" data-action="toggle-opp"></div>
+    <div class="item-label" contenteditable="true" data-action="edit-opp">${esc(o.label)}</div>
+    <button class="row-menu-btn" data-menu-btn data-action="opp-menu">⋮</button>
+  </li>`;
+}
+
+function suppRow(s) {
+  return `<li data-supp-id="${s.id}" class="${s.checked?'checked':''}">
+    <div class="mini-check ${s.checked?'checked':''}" data-action="toggle-supp"></div>
+    <div class="item-label" contenteditable="true" data-action="edit-supp">${esc(s.label)}</div>
+    <button class="row-menu-btn" data-menu-btn data-action="supp-menu">⋮</button>
+  </li>`;
+}
+
+function render() {
   const o1 = data.objectives.find(o => o.code === 'O1');
   const o2 = data.objectives.find(o => o.code === 'O2');
   const krO1 = data.keyResults.filter(k => k.objective_id === o1.id);
@@ -302,7 +462,7 @@ function render(data) {
         <div class="plan-divider-label">Actieplan per sector</div>
         <div class="plan-divider-line"></div>
       </div>
-      ${sectorsO1.map((s,i) => sectorBlock(s, data.campaigns, data.items, i===0)).join('')}
+      ${sectorsO1.map((s,i) => sectorBlock(s, i===0)).join('')}
 
       <div class="sector" data-opportunities="true">
         <div class="sector-header" data-action="toggle-sector">
@@ -313,13 +473,11 @@ function render(data) {
         <div class="sector-body">
           <div class="sector-content">
             <ul class="cm-list">
-              ${data.opportunities.map(o => `<li data-opp-id="${o.id}">
-                <div class="mini-check ${o.checked?'checked':''}" data-action="toggle-opp"></div>
-                <div class="item-label" contenteditable="true" data-action="edit-opp">${esc(o.label)}</div>
-                <span class="item-delete" data-action="delete-opp">×</span>
-              </li>`).join('')}
+              ${data.opportunities.map(oppRow).join('')}
             </ul>
-            <div class="add-item" data-action="add-opp"><div class="add-icon">+</div>opportuniteit toevoegen</div>
+            <div class="add-row" data-add-slot="opportunity">
+              <button class="add-btn" data-action="show-add-input"><span class="add-icon">+</span>opportuniteit toevoegen</button>
+            </div>
           </div>
         </div>
       </div>
@@ -341,7 +499,7 @@ function render(data) {
         <div class="plan-divider-label">Actieplan per sector</div>
         <div class="plan-divider-line"></div>
       </div>
-      ${sectorsO2.map((s,i) => sectorBlock(s, data.campaigns, data.items, i===0)).join('')}
+      ${sectorsO2.map((s,i) => sectorBlock(s, i===0)).join('')}
     </div>
 
     <div class="card c-support">
@@ -354,20 +512,68 @@ function render(data) {
       </div>
       <div class="support-list">
         <ul class="cm-list">
-          ${data.supporting.map(s => `<li data-supp-id="${s.id}">
-            <div class="mini-check ${s.checked?'checked':''}" data-action="toggle-supp"></div>
-            <div class="item-label" contenteditable="true" data-action="edit-supp">${esc(s.label)}</div>
-            <span class="item-delete" data-action="delete-supp">×</span>
-          </li>`).join('')}
+          ${data.supporting.map(suppRow).join('')}
         </ul>
-        <div class="add-item" data-action="add-supp"><div class="add-icon">+</div>project toevoegen</div>
+        <div class="add-row" data-add-slot="supporting">
+          <button class="add-btn" data-action="show-add-input"><span class="add-icon">+</span>project toevoegen</button>
+        </div>
       </div>
     </div>
 
   </div>`;
 }
 
-async function handleClick(e) {
+// ─── Inline add input ───
+function showAddInput(slot, onSave, placeholder) {
+  const btn = slot.querySelector('.add-btn, .add-campaign, .empty-cta');
+  const isCampaign = slot.dataset.addCampaignSlot !== undefined || slot.classList.contains('add-campaign-wrap');
+
+  if (isCampaign || slot.classList?.contains('empty')) {
+    slot.innerHTML = `<input class="add-campaign-input" placeholder="${placeholder||'Naam'}" />`;
+  } else {
+    slot.innerHTML = `<span class="add-icon">+</span><input class="add-input" placeholder="${placeholder||'Typ hier...'}" />`;
+  }
+  const input = slot.querySelector('input');
+  input.focus();
+
+  let saved = false;
+  async function save(chainNew=false) {
+    if (saved) return;
+    const value = input.value.trim();
+    if (!value) {
+      render(); // revert
+      return;
+    }
+    saved = true;
+    await onSave(value);
+    if (chainNew) {
+      // Re-open input after render
+      await reload();
+      const newSlot = app.querySelector(`[data-add-slot="${slot.dataset.addSlot||''}"][data-kind="${slot.dataset.kind||''}"][data-campaign-id="${slot.dataset.campaignId||''}"]`)
+        || app.querySelector(`[data-add-campaign-slot][data-sector-id="${slot.dataset.sectorId||''}"]`);
+      if (newSlot) showAddInput(newSlot, onSave, placeholder);
+    } else {
+      await reload();
+    }
+  }
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      save(true);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      saved = true;
+      render();
+    }
+  });
+  input.addEventListener('blur', () => {
+    if (!saved) save(false);
+  });
+}
+
+// ─── Event handling ───
+app.addEventListener('click', async (e) => {
   const actionEl = e.target.closest('[data-action]');
   if (!actionEl) return;
   const action = actionEl.dataset.action;
@@ -380,160 +586,330 @@ async function handleClick(e) {
     actionEl.closest('.acc').classList.toggle('open');
     return;
   }
+  if (action === 'toggle-done-group') {
+    actionEl.closest('.done-group').classList.toggle('open');
+    return;
+  }
   if (action === 'toggle-item') {
     const li = actionEl.closest('[data-item-id]');
     const id = +li.dataset.itemId;
     const checked = !actionEl.classList.contains('checked');
     actionEl.classList.toggle('checked', checked);
-    const { error } = await sb.from('items').update({ checked }).eq('id', id);
-    if (error) { showSaved(false); return; }
-    updateCounters(li);
-    showSaved();
+    li.classList.toggle('checked', checked);
+    const idx = data.items.findIndex(i => i.id === id);
+    if (idx >= 0) data.items[idx].checked = checked;
+    await sb.from('items').update({ checked }).eq('id', id);
+    // Update progress bars for this campaign
+    updateCampaignProgress(li.closest('.acc'));
+    return;
   }
   if (action === 'toggle-opp') {
-    const id = +actionEl.closest('[data-opp-id]').dataset.oppId;
+    const li = actionEl.closest('[data-opp-id]');
+    const id = +li.dataset.oppId;
     const checked = !actionEl.classList.contains('checked');
     actionEl.classList.toggle('checked', checked);
-    const { error } = await sb.from('opportunities').update({ checked }).eq('id', id);
-    showSaved(!error);
+    li.classList.toggle('checked', checked);
+    await sb.from('opportunities').update({ checked }).eq('id', id);
+    return;
   }
   if (action === 'toggle-supp') {
-    const id = +actionEl.closest('[data-supp-id]').dataset.suppId;
+    const li = actionEl.closest('[data-supp-id]');
+    const id = +li.dataset.suppId;
     const checked = !actionEl.classList.contains('checked');
     actionEl.classList.toggle('checked', checked);
-    const { error } = await sb.from('supporting_projects').update({ checked }).eq('id', id);
-    showSaved(!error);
+    li.classList.toggle('checked', checked);
+    await sb.from('supporting_projects').update({ checked }).eq('id', id);
+    return;
   }
-  if (action === 'add-item') {
-    const campId = +actionEl.closest('.acc').dataset.campaignId;
-    const kind = actionEl.dataset.kind;
-    const label = prompt(kind === 'action' ? 'Nieuwe actie:' : kind === 'org' ? 'Nieuwe organisatie:' : 'Nieuw item:');
-    if (!label) return;
-    const { error } = await sb.from('items').insert({ campaign_id: campId, label, kind, position: 999 });
-    if (error) { showSaved(false); return; }
-    await reload();
-    showSaved();
+  if (action === 'show-add-input') {
+    const slot = actionEl.closest('[data-add-slot], .add-campaign-wrap, .empty');
+    if (!slot) return;
+    handleShowAdd(slot);
+    return;
   }
-  if (action === 'add-campaign') {
-    const sectorId = +actionEl.closest('.sector').dataset.sectorId;
-    const name = prompt('Naam van de campagne:');
-    if (!name) return;
-    const { error } = await sb.from('campaigns').insert({ sector_id: sectorId, name, kind: 'campaign', position: 999 });
-    if (error) { showSaved(false); return; }
-    await reload();
-    showSaved();
+  if (action === 'show-add-campaign') {
+    const wrap = actionEl.closest('.add-campaign-wrap, .empty');
+    handleShowAdd(wrap);
+    return;
   }
-  if (action === 'add-opp') {
-    const label = prompt('Nieuwe opportuniteit:');
-    if (!label) return;
-    const { error } = await sb.from('opportunities').insert({ label, position: 999 });
-    if (error) { showSaved(false); return; }
-    await reload();
-    showSaved();
+  if (action === 'campaign-menu') {
+    e.stopPropagation();
+    const acc = actionEl.closest('.acc');
+    const id = +acc.dataset.campaignId;
+    const camp = data.campaigns.find(c => c.id === id);
+    const r = actionEl.getBoundingClientRect();
+    openMenu(r.right - 160, r.bottom + 4, [
+      { label: camp.done ? 'Markeer als actief' : 'Markeer als afgerond', action: () => toggleCampaignDone(id) },
+      { label: 'Hernoem', action: () => focusEditCampaign(acc) },
+      { divider: true },
+      { label: 'Verwijder', danger: true, action: () => softDeleteCampaign(id) }
+    ]);
+    return;
   }
-  if (action === 'add-supp') {
-    const label = prompt('Nieuw project:');
-    if (!label) return;
-    const { error } = await sb.from('supporting_projects').insert({ label, position: 999 });
-    if (error) { showSaved(false); return; }
-    await reload();
-    showSaved();
+  if (action === 'item-menu') {
+    e.stopPropagation();
+    const li = actionEl.closest('[data-item-id]');
+    const id = +li.dataset.itemId;
+    const r = actionEl.getBoundingClientRect();
+    openMenu(r.right - 160, r.bottom + 4, [
+      { label: 'Hernoem', action: () => { li.querySelector('.item-label').focus(); } },
+      { label: 'Verwijder', danger: true, action: () => softDeleteItem(id) }
+    ]);
+    return;
   }
-  if (action === 'delete-item') {
-    if (!confirm('Verwijderen?')) return;
-    const id = +actionEl.closest('[data-item-id]').dataset.itemId;
-    const { error } = await sb.from('items').delete().eq('id', id);
-    if (error) { showSaved(false); return; }
-    await reload();
-    showSaved();
+  if (action === 'opp-menu') {
+    e.stopPropagation();
+    const li = actionEl.closest('[data-opp-id]');
+    const id = +li.dataset.oppId;
+    const r = actionEl.getBoundingClientRect();
+    openMenu(r.right - 160, r.bottom + 4, [
+      { label: 'Hernoem', action: () => { li.querySelector('.item-label').focus(); } },
+      { label: 'Verwijder', danger: true, action: () => softDeleteOpp(id) }
+    ]);
+    return;
   }
-  if (action === 'delete-opp') {
-    if (!confirm('Verwijderen?')) return;
-    const id = +actionEl.closest('[data-opp-id]').dataset.oppId;
-    const { error } = await sb.from('opportunities').delete().eq('id', id);
-    if (error) { showSaved(false); return; }
-    await reload();
-    showSaved();
+  if (action === 'supp-menu') {
+    e.stopPropagation();
+    const li = actionEl.closest('[data-supp-id]');
+    const id = +li.dataset.suppId;
+    const r = actionEl.getBoundingClientRect();
+    openMenu(r.right - 160, r.bottom + 4, [
+      { label: 'Hernoem', action: () => { li.querySelector('.item-label').focus(); } },
+      { label: 'Verwijder', danger: true, action: () => softDeleteSupp(id) }
+    ]);
+    return;
   }
-  if (action === 'delete-supp') {
-    if (!confirm('Verwijderen?')) return;
-    const id = +actionEl.closest('[data-supp-id]').dataset.suppId;
-    const { error } = await sb.from('supporting_projects').delete().eq('id', id);
-    if (error) { showSaved(false); return; }
-    await reload();
-    showSaved();
+});
+
+function handleShowAdd(slot) {
+  if (slot.classList.contains('empty')) {
+    // Empty state → add campaign
+    const sectorId = +slot.querySelector('[data-sector-id]').dataset.sectorId;
+    slot.innerHTML = `<input class="add-campaign-input" placeholder="Naam van campagne" />`;
+    const input = slot.querySelector('input');
+    input.focus();
+    setupInputSave(input, async (val) => {
+      await sb.from('campaigns').insert({ sector_id: sectorId, name: val, kind: 'campaign', position: 999, done: false });
+    }, true);
+    return;
+  }
+  if (slot.dataset.addCampaignSlot !== undefined || slot.classList.contains('add-campaign-wrap')) {
+    const sectorId = +slot.dataset.sectorId;
+    slot.innerHTML = `<input class="add-campaign-input" placeholder="Naam van campagne" />`;
+    const input = slot.querySelector('input');
+    input.focus();
+    setupInputSave(input, async (val) => {
+      await sb.from('campaigns').insert({ sector_id: sectorId, name: val, kind: 'campaign', position: 999, done: false });
+    }, true, slot);
+    return;
+  }
+  const kind = slot.dataset.kind;
+  if (slot.dataset.addSlot === 'item') {
+    const campId = +slot.dataset.campaignId;
+    const placeholder = kind === 'action' ? 'Nieuwe actie' : kind === 'org' ? 'Nieuwe organisatie' : 'Nieuw item';
+    slot.innerHTML = `<span class="add-icon">+</span><input class="add-input" placeholder="${placeholder}" />`;
+    const input = slot.querySelector('input');
+    input.focus();
+    setupInputSave(input, async (val) => {
+      await sb.from('items').insert({ campaign_id: campId, label: val, kind, position: 999, checked: false });
+    }, true, slot);
+  }
+  if (slot.dataset.addSlot === 'opportunity') {
+    slot.innerHTML = `<span class="add-icon">+</span><input class="add-input" placeholder="Nieuwe opportuniteit" />`;
+    const input = slot.querySelector('input');
+    input.focus();
+    setupInputSave(input, async (val) => {
+      await sb.from('opportunities').insert({ label: val, position: 999, checked: false });
+    }, true, slot);
+  }
+  if (slot.dataset.addSlot === 'supporting') {
+    slot.innerHTML = `<span class="add-icon">+</span><input class="add-input" placeholder="Nieuw project" />`;
+    const input = slot.querySelector('input');
+    input.focus();
+    setupInputSave(input, async (val) => {
+      await sb.from('supporting_projects').insert({ label: val, position: 999, checked: false });
+    }, true, slot);
   }
 }
 
-function updateCounters(itemLi) {
-  const acc = itemLi.closest('.acc');
-  if (!acc) return;
-  const all = acc.querySelectorAll('.mini-check').length;
-  const done = acc.querySelectorAll('.mini-check.checked').length;
-  const counter = acc.querySelector('.acc-counter');
-  if (counter) counter.textContent = `${done}/${all}`;
+function setupInputSave(input, saveFn, chainNew, originalSlot) {
+  let saved = false;
+  async function save(chain) {
+    if (saved) return;
+    const val = input.value.trim();
+    if (!val) { render(); return; }
+    saved = true;
+    await saveFn(val);
+    await reload();
+    if (chain && chainNew) {
+      // Re-trigger show add on the new slot
+      // Find by attributes
+      setTimeout(() => {
+        const sel = originalSlot?.dataset.addCampaignSlot !== undefined
+          ? `[data-add-campaign-slot][data-sector-id="${originalSlot.dataset.sectorId}"]`
+          : `[data-add-slot="${originalSlot?.dataset.addSlot}"][data-kind="${originalSlot?.dataset.kind||''}"]` + (originalSlot?.dataset.campaignId?`[data-campaign-id="${originalSlot.dataset.campaignId}"]`:'');
+        const newSlot = app.querySelector(sel);
+        if (newSlot) handleShowAdd(newSlot);
+      }, 50);
+    }
+  }
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      save(true);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      saved = true;
+      render();
+    }
+  });
+  input.addEventListener('blur', () => { if (!saved) save(false); });
 }
 
-async function handleBlur(e) {
-  const target = e.target;
-  if (target.classList.contains('kr-edit')) {
-    const row = target.closest('[data-kr-id]');
+// ─── Inline rename ───
+app.addEventListener('blur', async (e) => {
+  const t = e.target;
+  if (t.classList.contains('kr-edit')) {
+    const row = t.closest('[data-kr-id]');
     const id = +row.dataset.krId;
-    const field = target.dataset.field;
-    let value = target.value.trim();
-    if (value === '___' || value === '—' || value === '') value = null;
-    const { error } = await sb.from('key_results').update({ [field]: value }).eq('id', id);
-    showSaved(!error);
-    target.classList.toggle('muted', !value);
+    const field = t.dataset.field;
+    let v = t.value.trim();
+    if (v === '___' || v === '—' || v === '') v = null;
+    await sb.from('key_results').update({ [field]: v }).eq('id', id);
+    t.classList.toggle('muted', !v);
   }
-  if (target.dataset.action === 'edit-item') {
-    const id = +target.closest('[data-item-id]').dataset.itemId;
-    const label = target.textContent.trim();
-    if (!label) return;
-    const { error } = await sb.from('items').update({ label }).eq('id', id);
-    showSaved(!error);
+  if (t.dataset.action === 'edit-item') {
+    const id = +t.closest('[data-item-id]').dataset.itemId;
+    const label = t.textContent.trim();
+    if (label) await sb.from('items').update({ label }).eq('id', id);
   }
-  if (target.dataset.action === 'edit-opp') {
-    const id = +target.closest('[data-opp-id]').dataset.oppId;
-    const label = target.textContent.trim();
-    if (!label) return;
-    const { error } = await sb.from('opportunities').update({ label }).eq('id', id);
-    showSaved(!error);
+  if (t.dataset.action === 'edit-opp') {
+    const id = +t.closest('[data-opp-id]').dataset.oppId;
+    const label = t.textContent.trim();
+    if (label) await sb.from('opportunities').update({ label }).eq('id', id);
   }
-  if (target.dataset.action === 'edit-supp') {
-    const id = +target.closest('[data-supp-id]').dataset.suppId;
-    const label = target.textContent.trim();
-    if (!label) return;
-    const { error } = await sb.from('supporting_projects').update({ label }).eq('id', id);
-    showSaved(!error);
+  if (t.dataset.action === 'edit-supp') {
+    const id = +t.closest('[data-supp-id]').dataset.suppId;
+    const label = t.textContent.trim();
+    if (label) await sb.from('supporting_projects').update({ label }).eq('id', id);
   }
-}
+}, true);
 
-function handleKeydown(e) {
-  if (e.key === 'Enter' && e.target.getAttribute('contenteditable') === 'true') {
+app.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && (e.target.getAttribute('contenteditable') === 'true' || e.target.classList.contains('kr-edit'))) {
     e.preventDefault();
     e.target.blur();
   }
-  if (e.key === 'Enter' && e.target.classList.contains('kr-edit')) {
-    e.target.blur();
+});
+
+// ─── Campaign done toggle ───
+async function toggleCampaignDone(id) {
+  const camp = data.campaigns.find(c => c.id === id);
+  const newVal = !camp.done;
+  camp.done = newVal;
+  await sb.from('campaigns').update({ done: newVal }).eq('id', id);
+  render();
+  showToast(newVal ? 'Campagne gemarkeerd als afgerond' : 'Campagne weer actief');
+}
+
+function focusEditCampaign(acc) {
+  const name = acc.querySelector('.acc-name');
+  name.setAttribute('contenteditable', 'true');
+  name.setAttribute('data-action', 'edit-campaign');
+  name.focus();
+  document.getSelection().selectAllChildren(name);
+  name.addEventListener('blur', async () => {
+    const newName = name.textContent.trim();
+    const id = +acc.dataset.campaignId;
+    if (newName) await sb.from('campaigns').update({ name: newName }).eq('id', id);
+    name.removeAttribute('contenteditable');
+    await reload();
+  }, { once: true });
+  name.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); name.blur(); } }, { once: true });
+}
+
+function updateCampaignProgress(accEl) {
+  if (!accEl) return;
+  const campId = +accEl.dataset.campaignId;
+  const camp = data.campaigns.find(c => c.id === campId);
+  const items = data.items.filter(i => i.campaign_id === campId);
+  const orgs = items.filter(i => i.kind === 'org');
+  const actions = items.filter(i => i.kind === 'action');
+  const generic = items.filter(i => i.kind === 'item');
+  const orgDone = orgs.filter(i => i.checked).length;
+  const actDone = actions.filter(i => i.checked).length;
+  const genDone = generic.filter(i => i.checked).length;
+  let html = '';
+  if (camp.kind === 'campaign') {
+    html = `${orgs.length ? `<div class="prog-item">Org ${orgDone}/${orgs.length}${progressBar(orgDone, orgs.length)}</div>` : ''}
+      ${actions.length ? `<div class="prog-item">Act ${actDone}/${actions.length}${progressBar(actDone, actions.length)}</div>` : ''}`;
+  } else {
+    html = generic.length ? `<div class="prog-item">${genDone}/${generic.length}${progressBar(genDone, generic.length)}</div>` : '';
   }
+  const pg = accEl.querySelector('.acc-progress');
+  if (pg) pg.innerHTML = html;
+}
+
+// ─── Soft delete with undo ───
+async function softDeleteCampaign(id) {
+  const camp = data.campaigns.find(c => c.id === id);
+  const itemsOfCamp = data.items.filter(i => i.campaign_id === id);
+  // Remove from DB
+  await sb.from('items').delete().eq('campaign_id', id);
+  await sb.from('campaigns').delete().eq('id', id);
+  await reload();
+  showToast('Campagne verwijderd', async () => {
+    const { data: newCamp } = await sb.from('campaigns').insert({
+      sector_id: camp.sector_id, name: camp.name, kind: camp.kind, position: camp.position, done: camp.done
+    }).select().single();
+    if (newCamp && itemsOfCamp.length) {
+      await sb.from('items').insert(itemsOfCamp.map(i => ({
+        campaign_id: newCamp.id, label: i.label, kind: i.kind, checked: i.checked, position: i.position
+      })));
+    }
+    await reload();
+  });
+}
+
+async function softDeleteItem(id) {
+  const item = data.items.find(i => i.id === id);
+  await sb.from('items').delete().eq('id', id);
+  await reload();
+  showToast('Verwijderd', async () => {
+    await sb.from('items').insert({ campaign_id: item.campaign_id, label: item.label, kind: item.kind, checked: item.checked, position: item.position });
+    await reload();
+  });
+}
+async function softDeleteOpp(id) {
+  const o = data.opportunities.find(x => x.id === id);
+  await sb.from('opportunities').delete().eq('id', id);
+  await reload();
+  showToast('Verwijderd', async () => {
+    await sb.from('opportunities').insert({ label: o.label, checked: o.checked, position: o.position });
+    await reload();
+  });
+}
+async function softDeleteSupp(id) {
+  const s = data.supporting.find(x => x.id === id);
+  await sb.from('supporting_projects').delete().eq('id', id);
+  await reload();
+  showToast('Verwijderd', async () => {
+    await sb.from('supporting_projects').insert({ label: s.label, checked: s.checked, position: s.position });
+    await reload();
+  });
 }
 
 async function reload() {
-  const data = await loadData();
-  render(data);
+  await loadData();
+  render();
 }
 
-app.addEventListener('click', handleClick);
-app.addEventListener('blur', handleBlur, true);
-app.addEventListener('keydown', handleKeydown);
-
-console.log('[TKK Hunting] Initializing Supabase connection...');
+console.log('[TKK Hunting] Laden...');
 reload()
-  .then(() => console.log('[TKK Hunting] Data geladen. Event handlers actief.'))
+  .then(() => console.log('[TKK Hunting] Klaar.'))
   .catch(err => {
-    console.error('[TKK Hunting] Fout:', err);
-    app.innerHTML = `<div class="loading" style="color:#CC0000">Fout bij laden: ${err.message}<br><small>Check browser console (Cmd+Option+J)</small></div>`;
+    console.error(err);
+    app.innerHTML = `<div class="loading" style="color:#CC0000">Fout: ${err.message}</div>`;
   });
 </script>
 </body>
